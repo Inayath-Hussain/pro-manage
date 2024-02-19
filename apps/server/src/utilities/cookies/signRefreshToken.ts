@@ -5,6 +5,6 @@ import { Response } from "express"
  * @param res express response object
  * @param token refresh token
  */
-export const signRefreshToken = (res: Response, token: string) => {
+export const signRefreshTokenCookie = (res: Response, token: string) => {
     res.cookie("refreshToken", token, { httpOnly: true, signed: true, expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 15) })
 }

@@ -1,4 +1,4 @@
-import { User } from "../models/user"
+import { IUser, User } from "../models/user"
 
 class UserService {
 
@@ -7,6 +7,11 @@ class UserService {
         return await User.findOne({ email })
     }
 
+    async createUser(userDetails: IUser) {
+        const user = new User(userDetails)
+
+        return await user.save()
+    }
 }
 
 

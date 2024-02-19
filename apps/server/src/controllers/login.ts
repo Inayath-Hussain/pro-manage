@@ -6,7 +6,7 @@ import { Ierror } from "../utilities/requestHandlers/errorHandler";
 import { createAccessToken } from "../utilities/tokens/accessToken";
 import { createRefreshToken } from "../utilities/tokens/refreshToken";
 import { signAccessTokenCookie } from "../utilities/cookies/signAccessToken";
-import { signRefreshToken } from "../utilities/cookies/signRefreshToken";
+import { signRefreshTokenCookie } from "../utilities/cookies/signRefreshToken";
 
 export const loginController: RequestHandler<{}, {}, ILoginBody> = async (req, res, next) => {
     const { email, password } = req.body
@@ -28,7 +28,7 @@ export const loginController: RequestHandler<{}, {}, ILoginBody> = async (req, r
 
     // signing the tokens with a secret key and adding the signed tokens to response cookies
     signAccessTokenCookie(res, accessToken)
-    signRefreshToken(res, refreshToken)
+    signRefreshTokenCookie(res, refreshToken)
 
     res.status(200).json({ message: "success" })
 }

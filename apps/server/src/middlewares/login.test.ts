@@ -46,7 +46,7 @@ describe("login middleware", () => {
         const res = {}
         const next = jest.fn()
 
-        const errorObj: Ierror = { statusCode: 400, message: "password should contain atleast one number, one letter and one special symbol" }
+        const errorObj: Ierror = { statusCode: 400, message: "password should be 8 letters long and contain atleast one number, one Uppercase letter and one special symbol" }
 
         const finalNext1 = await validateRequest(validateLoginBody, mockedReq1, res, next)
 

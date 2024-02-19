@@ -6,7 +6,8 @@ import cookieParser from "cookie-parser";
 import { corsOptions } from "./config/corsOptions";
 import { env } from "./config/env";
 // routers
-import { userRouter } from "./routes/user";
+import { mainRouter } from "./routes";
+
 import { errorHandler } from "./utilities/requestHandlers/errorHandler";
 
 const app = express()
@@ -22,9 +23,9 @@ app.use(express.json())    // express.json?
 
 
 // ROUTES
-app.use("/api", (req, res, next) => next())     // "/api" prefix
+app.use("/api", mainRouter)     // "/api" prefix
 
-app.use("/user", userRouter);
+// app.use("/user", userRouter);
 
 
 app.use(errorHandler)

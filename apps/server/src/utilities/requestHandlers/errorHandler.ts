@@ -14,7 +14,5 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
         // logout_user = false
     } = err
 
-    console.log(err)
-
     res.status(statusCode).json({ message })
 }
