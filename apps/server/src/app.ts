@@ -25,8 +25,6 @@ app.use(express.json())    // express.json?
 // ROUTES
 app.use("/api", mainRouter)     // "/api" prefix
 
-// app.use("/user", userRouter);
-
 
 app.use(errorHandler)
 

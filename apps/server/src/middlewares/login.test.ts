@@ -19,7 +19,7 @@ describe("login middleware", () => {
 
 
         // assert error response
-        expect(res._getStatusCode()).toBe(400)
+        expect(res._getStatusCode()).toBe(422)
         expect(res._getJSONData()).toEqual(errorObj)
 
     })
@@ -34,7 +34,7 @@ describe("login middleware", () => {
 
         await validateRequest(validateLoginBody, mockedReq, res, next)
 
-        expect(res._getStatusCode()).toBe(400)
+        expect(res._getStatusCode()).toBe(422)
         expect(res._getJSONData()).toEqual(errorObj)
 
     })
@@ -52,7 +52,7 @@ describe("login middleware", () => {
 
         await validateRequest(validateLoginBody, mockedReq1, response1, next)
 
-        expect(response1._getStatusCode()).toBe(400)
+        expect(response1._getStatusCode()).toBe(422)
         expect(response1._getJSONData()).toEqual(errorObj)
 
 
@@ -90,7 +90,7 @@ describe("login middleware", () => {
         const res = createResponse()
         const next = jest.fn()
 
-        const errorObj: ILoginMiddlewareError = { message: "Invalid body. should contain only email and password.", errors: {} }
+        const errorObj: ILoginMiddlewareError = { message: "Invalid body", errors: { unknownField: "Invalid body. should contain only email and password." } }
 
 
         await validateRequest(validateLoginBody, mockedReq, res, next)

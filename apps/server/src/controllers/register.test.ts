@@ -18,7 +18,7 @@ describe("register controller", () => {
         const mockedRes = createResponse();
         const next = jest.fn();
 
-        const errorObj: Ierror = { statusCode: 400, message: "email is already registered" }
+        const errorObj: Ierror = { statusCode: 409, message: "email is already registered" }
 
 
         const userDoc = new User(userObj);

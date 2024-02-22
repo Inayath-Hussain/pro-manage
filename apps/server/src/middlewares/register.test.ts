@@ -15,6 +15,7 @@ describe("register middleware", () => {
 
         await validateRequest(validateRegisterBody, mockedReq, res, next)
 
+        expect(res._getStatusCode()).toBe(422)
         expect(res._getJSONData()).toEqual(errorObj)
     })
 
@@ -27,6 +28,7 @@ describe("register middleware", () => {
 
         await validateRequest(validateRegisterBody, mockedReq, res, next)
 
+        expect(res._getStatusCode()).toBe(422)
         expect(res._getJSONData()).toEqual(errorObj)
 
     })
@@ -41,6 +43,7 @@ describe("register middleware", () => {
 
         await validateRequest(validateRegisterBody, mockedReq, res, next)
 
+        expect(res._getStatusCode()).toBe(422)
         expect(res._getJSONData()).toEqual(errorObj)
 
     })
@@ -59,21 +62,25 @@ describe("register middleware", () => {
 
         const response1 = createResponse()
         await validateRequest(validateRegisterBody, mockedReq1, response1, next)
+        expect(response1._getStatusCode()).toBe(422)
         expect(response1._getJSONData()).toEqual(errorObj)
 
 
         const response2 = createResponse()
         await validateRequest(validateRegisterBody, mockedReq2, response2, next)
+        expect(response2._getStatusCode()).toBe(422)
         expect(response2._getJSONData()).toEqual(errorObj)
 
 
         const response3 = createResponse()
         await validateRequest(validateRegisterBody, mockedReq3, response3, next)
+        expect(response3._getStatusCode()).toBe(422)
         expect(response3._getJSONData()).toEqual(errorObj)
 
 
         const response4 = createResponse()
         await validateRequest(validateRegisterBody, mockedReq4, response4, next)
+        expect(response4._getStatusCode()).toBe(422)
         expect(response4._getJSONData()).toEqual(errorObj)
 
     })
@@ -89,6 +96,7 @@ describe("register middleware", () => {
 
         await validateRequest(validateRegisterBody, mockedReq, res, next)
 
+        expect(res._getStatusCode()).toBe(422)
         expect(res._getJSONData()).toEqual(errorObj)
     })
 })

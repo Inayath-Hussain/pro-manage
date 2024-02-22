@@ -12,12 +12,17 @@ export interface IRegisterBody {
     password: string
 }
 
+
+interface IUnknownField {
+    unknownField: string
+}
+
 export interface ILoginMiddlewareError {
     message: string
-    errors: Partial<ILoginBody>
+    errors: Partial<ILoginBody & IUnknownField>
 }
 
 export interface IRegisterMiddlewareError {
     message: string
-    errors: Partial<IRegisterBody>
+    errors: Partial<IRegisterBody & IUnknownField>
 }

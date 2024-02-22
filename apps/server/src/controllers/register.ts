@@ -13,7 +13,7 @@ export const registerController: RequestHandler<{}, {}, IRegisterBody> = async (
 
     const registeredUser = await userService.getUserByEmail(email)
 
-    if (registeredUser !== null) return next({ statusCode: 400, message: "email is already registered" } as Ierror)
+    if (registeredUser !== null) return next({ statusCode: 409, message: "email is already registered" } as Ierror)
 
     const salt = await genSalt(10);
     const hashedPassword = await hash(password, salt)
