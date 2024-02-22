@@ -11,3 +11,13 @@ export interface IRegisterBody {
     email: string
     password: string
 }
+
+export interface ILoginMiddlewareError {
+    message: string
+    errors: Partial<ILoginBody>
+}
+
+export interface IRegisterMiddlewareError {
+    message: string
+    errors: Partial<IRegisterBody>
+}

@@ -1,47 +1,47 @@
-import { createRequest } from "node-mocks-http"
+import { createRequest, createResponse } from "node-mocks-http"
 import { validateRequest } from "./middleware.test.helper"
 import { validateRegisterBody } from "./register"
-import { Ierror } from "../utilities/requestHandlers/errorHandler"
+import { IRegisterMiddlewareError } from "@pro-manage/common-interfaces"
 
 describe("register middleware", () => {
-    const res = {}
     const next = jest.fn()
 
 
     test("should call next with 400 response when body is empty", async () => {
+        const res = createResponse()
         const mockedReq = createRequest({ body: {} })
 
-        const errorObj: Ierror = { statusCode: 400, message: "name is required" }
+        const errorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { name: "name is required", email: "email is required", password: "password is required" } }
 
-        const finalNext = await validateRequest(validateRegisterBody, mockedReq, res, next)
+        await validateRequest(validateRegisterBody, mockedReq, res, next)
 
-        expect(finalNext).toHaveBeenCalledTimes(1)
-        expect(finalNext).toHaveBeenCalledWith(errorObj)
+        expect(res._getJSONData()).toEqual(errorObj)
     })
 
 
     test("should call next with 400 response when name contains only numbers", async () => {
-        const mockedReq = createRequest({ body: { name: "123" } })
+        const res = createResponse()
+        const mockedReq = createRequest({ body: { name: "123", email: "test@domain.com", password: 'Example@1' } })
 
-        const errorObj: Ierror = { statusCode: 400, message: "name should contain letters" }
+        const errorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { name: "name should contain letters" } }
 
-        const finalNext = await validateRequest(validateRegisterBody, mockedReq, res, next)
+        await validateRequest(validateRegisterBody, mockedReq, res, next)
 
-        expect(finalNext).toHaveBeenCalledTimes(1)
-        expect(finalNext).toHaveBeenCalledWith(errorObj)
+        expect(res._getJSONData()).toEqual(errorObj)
 
     })
 
 
     test("should call next with 400 response if email is in invalid format", async () => {
-        const mockedReq = createRequest({ body: { name: "test1", email: "testdomain.com" } })
+        const res = createResponse()
+        const mockedReq = createRequest({ body: { name: "test1", email: "testdomain.com", password: "Example@1" } })
 
-        const errorObj: Ierror = { statusCode: 400, message: "email is invalid" }
 
-        const finalNext = await validateRequest(validateRegisterBody, mockedReq, res, next)
+        const errorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { email: "email is invalid" } }
 
-        expect(finalNext).toHaveBeenCalledTimes(1)
-        expect(finalNext).toHaveBeenCalledWith(errorObj)
+        await validateRequest(validateRegisterBody, mockedReq, res, next)
+
+        expect(res._getJSONData()).toEqual(errorObj)
 
     })
 
@@ -54,40 +54,41 @@ describe("register middleware", () => {
         const mockedReq4 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "1@" } })
 
 
-        const errorObj: Ierror = { statusCode: 400, message: "password should be 8 letters long and contain atleast one number, one Uppercase letter and one special symbol" }
-
-        const finalNext1 = await validateRequest(validateRegisterBody, mockedReq1, res, next)
-
-        expect(finalNext1).toHaveBeenCalledTimes(1)
-        expect(finalNext1).toHaveBeenCalledWith(errorObj)
+        const errorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { password: "password should be 8 letters long and contain atleast one number, one Uppercase letter and one special symbol" } }
 
 
-        const finalNext2 = await validateRequest(validateRegisterBody, mockedReq2, res, next)
-
-        expect(finalNext2).toHaveBeenCalledTimes(1)
-        expect(finalNext2).toHaveBeenCalledWith(errorObj)
-
-
-        const finalNext3 = await validateRequest(validateRegisterBody, mockedReq3, res, next)
-
-        expect(finalNext3).toHaveBeenCalledTimes(1)
-        expect(finalNext3).toHaveBeenCalledWith(errorObj)
+        const response1 = createResponse()
+        await validateRequest(validateRegisterBody, mockedReq1, response1, next)
+        expect(response1._getJSONData()).toEqual(errorObj)
 
 
-        const finalNext4 = await validateRequest(validateRegisterBody, mockedReq4, res, next)
+        const response2 = createResponse()
+        await validateRequest(validateRegisterBody, mockedReq2, response2, next)
+        expect(response2._getJSONData()).toEqual(errorObj)
 
-        expect(finalNext4).toHaveBeenCalledTimes(1)
-        expect(finalNext4).toHaveBeenCalledWith(errorObj)
+
+        const response3 = createResponse()
+        await validateRequest(validateRegisterBody, mockedReq3, response3, next)
+        expect(response3._getJSONData()).toEqual(errorObj)
+
+
+        const response4 = createResponse()
+        await validateRequest(validateRegisterBody, mockedReq4, response4, next)
+        expect(response4._getJSONData()).toEqual(errorObj)
+
     })
 
 
     test("should call next with 400 response when body contains any additional fields", async () => {
         const mockedReq = createRequest({ body: { name: "test", email: "test@domain.com", password: "Example@1", hello: "world" } })
+        const res = createResponse()
 
-        const errorObj: Ierror = { statusCode: 400, message: "Invalid body. should contain only name, email and password." }
+        // const errorObj: Ierror = { statusCode: 400, message: "Invalid body. should contain only name, email and password." }
 
-        const finalNext = await validateRequest(validateRegisterBody, mockedReq, res, next)
-        expect(finalNext).toHaveBeenCalledTimes(1)
-        expect(finalNext).toHaveBeenCalledWith(errorObj)
+        const errorObj: IRegisterMiddlewareError = { message: "Invalid body. should contain only name, email and password.", errors: {} }
+
+        await validateRequest(validateRegisterBody, mockedReq, res, next)
+
+        expect(res._getJSONData()).toEqual(errorObj)
     })
 })
