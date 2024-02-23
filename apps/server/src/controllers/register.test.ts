@@ -14,7 +14,7 @@ describe("register controller", () => {
     const mockedReq = createRequest({ body: { email: "test@domain.com", name: "test1", password: "Example@1" } as IRegisterBody })
     const userObj: IUser = { email: "test@domain.com", name: "test1", password: "Example@1" }
 
-    test("should call next with 400 response when email is already registered", async () => {
+    test("should call next with 409 response when email is already registered", async () => {
         const mockedRes = createResponse();
         const next = jest.fn();
 

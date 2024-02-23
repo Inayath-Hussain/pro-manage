@@ -7,7 +7,7 @@ describe("register middleware", () => {
     const next = jest.fn()
 
 
-    test("should call next with 400 response when body is empty", async () => {
+    test("should send 422 response when body is empty", async () => {
         const res = createResponse()
         const mockedReq = createRequest({ body: {} })
 
@@ -20,7 +20,7 @@ describe("register middleware", () => {
     })
 
 
-    test("should call next with 400 response when name contains only numbers", async () => {
+    test("should send 422 response when name contains only numbers", async () => {
         const res = createResponse()
         const mockedReq = createRequest({ body: { name: "123", email: "test@domain.com", password: 'Example@1' } })
 
@@ -34,7 +34,7 @@ describe("register middleware", () => {
     })
 
 
-    test("should call next with 400 response if email is in invalid format", async () => {
+    test("should send 422 response when email is in invalid format", async () => {
         const res = createResponse()
         const mockedReq = createRequest({ body: { name: "test1", email: "testdomain.com", password: "Example@1" } })
 
@@ -49,15 +49,16 @@ describe("register middleware", () => {
     })
 
 
-    test("should call next with 400 response if password doesn't meet requirements", async () => {
+    test("should send 422 response if password doesn't meet requirements", async () => {
 
         const mockedReq1 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "Example" } })
         const mockedReq2 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "Example1" } })
         const mockedReq3 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "Example@" } })
         const mockedReq4 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "1@" } })
+        const mockedReq5 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "1123456889" } })
 
 
-        const errorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { password: "password should be 8 letters long and contain atleast one number, one Uppercase letter and one special symbol" } }
+        const errorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { password: "password should be 8 letters long and contain atleast 1 number, 1 letter and 1 special symbol" } }
 
 
         const response1 = createResponse()
@@ -83,16 +84,23 @@ describe("register middleware", () => {
         expect(response4._getStatusCode()).toBe(422)
         expect(response4._getJSONData()).toEqual(errorObj)
 
+        const errorObj2: IRegisterMiddlewareError = { message: "Invalid body", errors: { password: "password should contain atleast 1 letter" } }
+
+        const response5 = createResponse()
+        await validateRequest(validateRegisterBody, mockedReq5, response5, next)
+        expect(response5._getStatusCode()).toBe(422)
+        expect(response5._getJSONData()).toEqual(errorObj2)
+
     })
 
 
-    test("should call next with 400 response when body contains any additional fields", async () => {
+    test("should send 422 response when body contains any additional fields", async () => {
         const mockedReq = createRequest({ body: { name: "test", email: "test@domain.com", password: "Example@1", hello: "world" } })
         const res = createResponse()
 
         // const errorObj: Ierror = { statusCode: 400, message: "Invalid body. should contain only name, email and password." }
 
-        const errorObj: IRegisterMiddlewareError = { message: "Invalid body. should contain only name, email and password.", errors: {} }
+        const errorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { unknownField: "Invalid body. should contain only name, email and password." } }
 
         await validateRequest(validateRegisterBody, mockedReq, res, next)
 

@@ -9,9 +9,7 @@ export const validateLoginBody: IValidateRequestMiddlewares = [
         .isEmail().withMessage("Invalid email"),
 
     body("password").trim().escape()
-        .exists({ values: "falsy" }).withMessage("password is required").bail()
-        .isStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 })
-        .withMessage("password should be 8 letters long and contain atleast one number, one Uppercase letter and one special symbol"),
+        .exists({ values: "falsy" }).withMessage("password is required"),
 
     checkExact(undefined, { message: "Invalid body. should contain only email and password.", locations: ["body"] }),
 

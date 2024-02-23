@@ -8,7 +8,7 @@ import { validateRequest } from "./middleware.test.helper"
 
 
 describe("login middleware", () => {
-    test("should return 400 response when body is empty", async () => {
+    test("should return 422 response when body is empty", async () => {
         const mockedReq = createRequest({ body: { email: "" } })
         const res = createResponse()
         const next = jest.fn()
@@ -25,7 +25,7 @@ describe("login middleware", () => {
     })
 
 
-    test("should call next with 400 response when email is in invalid format", async () => {
+    test("should send 422 response when email is in invalid format", async () => {
         const mockedReq = createRequest({ body: { email: "testdomain.com" } })
         const res = createResponse()
         const next = jest.fn()
@@ -40,14 +40,14 @@ describe("login middleware", () => {
     })
 
 
-    test("should call next with 400 response when password doesn't meet requirement", async () => {
+    test("should send 422 response when password doesn't meet requirement", async () => {
         const next = jest.fn()
 
-        const errorObj: ILoginMiddlewareError = { message: "Invalid body", errors: { password: "password should be 8 letters long and contain atleast one number, one Uppercase letter and one special symbol" } }
+        const errorObj: ILoginMiddlewareError = { message: "Invalid body", errors: { password: "password is required" } }
 
 
 
-        const mockedReq1 = createRequest({ body: { email: "test@domain.com", password: "Example" } })
+        const mockedReq1 = createRequest({ body: { email: "test@domain.com" } })
         const response1 = createResponse()
 
         await validateRequest(validateLoginBody, mockedReq1, response1, next)
@@ -57,7 +57,7 @@ describe("login middleware", () => {
 
 
 
-        const mockedReq2 = createRequest({ body: { email: "test@domain.com", password: "Example1" } })
+        const mockedReq2 = createRequest({ body: { email: "test@domain.com", password: "" } })
         const response2 = createResponse()
 
         await validateRequest(validateLoginBody, mockedReq2, response2, next)
@@ -66,7 +66,7 @@ describe("login middleware", () => {
 
 
 
-        const mockedReq3 = createRequest({ body: { email: "test@domain.com", password: "Example@" } })
+        const mockedReq3 = createRequest({ body: { email: "test@domain.com", password: null } })
         const response3 = createResponse()
 
         await validateRequest(validateLoginBody, mockedReq3, response3, next)
@@ -74,18 +74,10 @@ describe("login middleware", () => {
         expect(response3._getJSONData()).toEqual(errorObj)
 
 
-
-
-        const mockedReq4 = createRequest({ body: { email: "test@domain.com", password: "1@" } })
-        const response4 = createResponse()
-
-        await validateRequest(validateLoginBody, mockedReq4, response4, next)
-
-        expect(response4._getJSONData()).toEqual(errorObj)
     })
 
 
-    test("should return 400 response when additional fields are present in request body", async () => {
+    test("should send 422 response when additional fields are present in request body", async () => {
         const mockedReq = createRequest({ body: { email: "test@domain.com", password: "Example@1", hello: "world" } })
         const res = createResponse()
         const next = jest.fn()
