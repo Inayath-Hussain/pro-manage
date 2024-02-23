@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import z from "zod";
 import styles from "./common.module.css";
@@ -8,11 +8,13 @@ import FormInput, { IFormInputProps } from "@web/components/UserPage/Input";
 import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
 import { loginService } from "@web/services/api/loginService";
+import { useOnline } from "@web/hooks/useOnline";
 
 const LoginPage = () => {
 
     const navigate = useNavigate();
     const { signalRef } = useAbortController();
+    const { isOnline } = useOnline();
 
     // schema to validate form values
     const formSchema = z.object({
@@ -43,19 +45,15 @@ const LoginPage = () => {
     // form submition error 
     const [submitionError, setSubmitionError] = useState("");
 
+    // loader state for login api call
+    const [loading, setLoading] = useState(false);
 
-    interface IinputsArray {
-        inputKey: keyof IForm
-        inputType: IFormInputProps["inputType"]
-        placeHolderProp: IFormInputProps["placeHolderProp"]
-        required: IFormInputProps["required"]
-    }
 
-    // form inputs
-    const inputs: IinputsArray[] = [
-        { inputKey: "email", inputType: "email", placeHolderProp: "Email", required: true },
-        { inputKey: "password", inputType: "password", placeHolderProp: "Password", required: true }
-    ]
+    useEffect(() => {
+        if (!isOnline) setSubmitionError("You are offline")
+        else setSubmitionError("")
+    }, [isOnline])
+
 
     /**
      * updates {@link formState} values
@@ -73,6 +71,8 @@ const LoginPage = () => {
         try {
             await formSchema.parseAsync(formState)
 
+            setLoading(true)
+
             await loginService(formState, signalRef.current.signal)
 
             setSubmitionError('')
@@ -86,21 +86,39 @@ const LoginPage = () => {
 
                 setSubmitionError('')
 
-                return setFormErrors({
+                setFormErrors({
                     email: email ? email[0] : "",
                     password: password ? password[0] : ""
                 })
             }
 
             // if error is caused due to invalid form input values
-            if (typeof ex === "object") {
-                return setFormErrors(ex as any)
+            else if (typeof ex === "object") {
+                setFormErrors(ex as any)
+            }
+            else {
+                setFormErrors(initialValues)
+                setSubmitionError(ex as string)
             }
 
-            setFormErrors(initialValues)
-            setSubmitionError(ex as string)
         }
+
+        setLoading(false)
     }
+
+
+    interface IinputsArray {
+        inputKey: keyof IForm
+        inputType: IFormInputProps["inputType"]
+        placeHolderProp: IFormInputProps["placeHolderProp"]
+        required: IFormInputProps["required"]
+    }
+
+    // form inputs
+    const inputs: IinputsArray[] = [
+        { inputKey: "email", inputType: "email", placeHolderProp: "Email", required: true },
+        { inputKey: "password", inputType: "password", placeHolderProp: "Password", required: true }
+    ]
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -124,7 +142,7 @@ const LoginPage = () => {
 
             {/* submit button */}
             <FormButton text="Log in" variant="filled" type="submit"
-                className={`${styles.first_button} ${styles.button}`} />
+                className={`${styles.first_button} ${styles.button}`} disabled={!isOnline} loading={loading} />
 
 
             <p className={styles.text}>Have no account yet?</p>

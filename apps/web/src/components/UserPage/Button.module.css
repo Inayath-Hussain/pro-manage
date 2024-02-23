@@ -11,6 +11,12 @@
     cursor: pointer;
 }
 
+.button:disabled {
+    background: #9b9b9b;
+
+    cursor: not-allowed;
+}
+
 /* .button:focus {
     border: 1.6px inset #000;
 } */
@@ -21,6 +27,11 @@
 
     background: var(--primary-color);
     border: none;
+}
+
+
+.loading:disabled {
+    cursor: wait;
 }
 
 
