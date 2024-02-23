@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+    /* default font family */
+    --poppins: "Poppins", sans-serif;
+    --open-sans: "Open Sans", sans-serif;
+    --inter: "Inter", sans-serif;
+
+    --primary-color: #17A2B8;
+
+    font-family: var(--poppins);
+
+}
