@@ -13,9 +13,11 @@ export const validateRegisterBody: IValidateRequestMiddlewares = [
 
     body("password").trim().escape()
         .exists({ values: "falsy" }).withMessage("password is required").bail()
-        .not().isNumeric().withMessage("password should contain atleast 1 letter").bail()
-        .isStrongPassword({ minLength: 8, minNumbers: 1, minSymbols: 1 })
-        .withMessage("password should be 8 letters long and contain atleast 1 number, 1 letter and 1 special symbol"),
+        .isLength({ min: 8 }).withMessage("password must be 8 letters long").bail()
+        .isStrongPassword({ minNumbers: 1, minSymbols: 1, minLowercase: 1 })
+        .withMessage("must contain atleast 1 number, 1 letter and 1 special symbol"),
+
+
 
     checkExact(undefined, { message: "Invalid body. should contain only name, email and password.", locations: ["body"] }),
 

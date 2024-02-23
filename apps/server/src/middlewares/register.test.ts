@@ -52,44 +52,43 @@ describe("register middleware", () => {
     test("should send 422 response if password doesn't meet requirements", async () => {
 
         const mockedReq1 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "Example" } })
-        const mockedReq2 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "Example1" } })
-        const mockedReq3 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "Example@" } })
-        const mockedReq4 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "1@" } })
+        const mockedReq2 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "Exampleee1" } })
+        const mockedReq3 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "Example@reerterger" } })
+        const mockedReq4 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "12345678@" } })
         const mockedReq5 = createRequest({ body: { name: "test1", email: "test@domain.com", password: "1123456889" } })
 
 
-        const errorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { password: "password should be 8 letters long and contain atleast 1 number, 1 letter and 1 special symbol" } }
-
+        const lengthErrorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { password: "password must be 8 letters long" } }
+        const constraintErrorObj: IRegisterMiddlewareError = { message: "Invalid body", errors: { password: "must contain atleast 1 number, 1 letter and 1 special symbol" } }
 
         const response1 = createResponse()
         await validateRequest(validateRegisterBody, mockedReq1, response1, next)
         expect(response1._getStatusCode()).toBe(422)
-        expect(response1._getJSONData()).toEqual(errorObj)
+        expect(response1._getJSONData()).toEqual(lengthErrorObj)
 
 
         const response2 = createResponse()
         await validateRequest(validateRegisterBody, mockedReq2, response2, next)
         expect(response2._getStatusCode()).toBe(422)
-        expect(response2._getJSONData()).toEqual(errorObj)
+        expect(response2._getJSONData()).toEqual(constraintErrorObj)
 
 
         const response3 = createResponse()
         await validateRequest(validateRegisterBody, mockedReq3, response3, next)
         expect(response3._getStatusCode()).toBe(422)
-        expect(response3._getJSONData()).toEqual(errorObj)
+        expect(response3._getJSONData()).toEqual(constraintErrorObj)
 
 
         const response4 = createResponse()
         await validateRequest(validateRegisterBody, mockedReq4, response4, next)
         expect(response4._getStatusCode()).toBe(422)
-        expect(response4._getJSONData()).toEqual(errorObj)
+        expect(response4._getJSONData()).toEqual(constraintErrorObj)
 
-        const errorObj2: IRegisterMiddlewareError = { message: "Invalid body", errors: { password: "password should contain atleast 1 letter" } }
 
         const response5 = createResponse()
         await validateRequest(validateRegisterBody, mockedReq5, response5, next)
         expect(response5._getStatusCode()).toBe(422)
-        expect(response5._getJSONData()).toEqual(errorObj2)
+        expect(response5._getJSONData()).toEqual(constraintErrorObj)
 
     })
 
