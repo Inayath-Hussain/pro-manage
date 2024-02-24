@@ -5,7 +5,9 @@ export const routes = {
 
         get login() { return this.index + "/login" },
 
-        get register() { return this.index + "/register" }
+        get register() { return this.index + "/register" },
 
-    }
+    },
+    settings: "/settings",
+    analytics: "/analytics"
 }
