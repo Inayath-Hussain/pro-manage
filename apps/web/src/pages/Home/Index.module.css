@@ -1,5 +1,5 @@
 .home_layout {
     display: grid;
 
-    grid-template: 100svh/ 0.2fr 0.8fr;
+    grid-template: 100svh/ 230px 1fr;
 }

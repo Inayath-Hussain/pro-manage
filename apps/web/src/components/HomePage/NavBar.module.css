@@ -63,6 +63,9 @@
     padding: 0 !important;
 }
 
+.logout_button:disabled {
+    cursor: not-allowed;
+}
 
 .nav_container {
     font-family: var(--poppins);

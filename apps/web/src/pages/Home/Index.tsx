@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import NavBar from "@web/components/HomePage/NavBar";
-import styles from "./Home.module.css"
+import styles from "./Index.module.css"
 
 const HomePage = () => {
 
