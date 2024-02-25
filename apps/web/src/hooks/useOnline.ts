@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 /**
- * variable which indicates when user is offline or online. can be helpful when trying to send a api call
+ * returns a state variable which indicates online status of user. can be helpful when trying to make a api call
  */
 export const useOnline = () => {
     const [isOnline, setIsOnline] = useState(navigator.onLine);

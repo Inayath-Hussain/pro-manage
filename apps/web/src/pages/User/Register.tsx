@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import z from "zod";
 import styles from "./common.module.css"
@@ -9,6 +8,7 @@ import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
 import { registerService } from "@web/services/api/registerService";
 import { useOnline } from "@web/hooks/useOnline";
+import useForm from "@web/hooks/useForm";
 
 
 
@@ -39,33 +39,14 @@ const RegisterPage = () => {
         confirmPassword: ""
     }
 
-    // form input values
-    const [formState, setFormState] = useState<IForm>(initialValues)
+    const {
+        formValues,
+        formErrors, setFormErrors,
+        submitionError, setSubmitionError,
+        loading, setLoading,
+        handleChange
+    } = useForm({ initialValues })
 
-    // form input errors
-    const [formErrors, setFormErrors] = useState<IForm>(initialValues)
-
-    // to display any form submition errors(like - email is already registered)
-    const [submitionError, setSubmitionError] = useState("");
-
-    // loader state for register api call
-    const [loading, setLoading] = useState(false);
-
-
-    useEffect(() => {
-        if (!isOnline) setSubmitionError("You are offline")
-        else setSubmitionError("")
-    }, [isOnline])
-
-
-
-    /**
-     * updates {@link formState} values
-     * @param property one of the property name(or key) of {@link formState}
-     */
-    const handleChange = (property: keyof IForm, e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormState({ ...formState, [property]: e.target.value })
-    }
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,7 +54,7 @@ const RegisterPage = () => {
 
         try {
             // validate form values
-            await formSchema.parseAsync(formState)
+            await formSchema.parseAsync(formValues)
 
             // remove if any form input errors from previous submition attempt are present
             setFormErrors(initialValues)
@@ -81,7 +62,7 @@ const RegisterPage = () => {
             setLoading(true)
 
             // register api
-            await registerService({ email: formState.email, name: formState.name, password: formState.password }, signalRef.current.signal)
+            await registerService({ email: formValues.email, name: formValues.name, password: formValues.password }, signalRef.current.signal)
 
             // remove if any form submition errors from previous attempt are present
             setSubmitionError('')

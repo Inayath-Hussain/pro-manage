@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import z from "zod";
 import FormButton from "@web/components/UserPage/Button";
 import FormError from "@web/components/UserPage/ErrorMsg";
@@ -6,6 +6,7 @@ import FormInput, { IFormInputProps } from "@web/components/UserPage/Input";
 import { useOnline } from "@web/hooks/useOnline";
 
 import styles from "./Settings.module.css"
+import useForm from "@web/hooks/useForm";
 
 const SettingsPage = () => {
 
@@ -85,35 +86,13 @@ const SettingsPage = () => {
         newPassword: ""
     }
 
-    const [formValues, setFormValues] = useState<IForm>({
-        name: "",
-        oldPassword: "",
-        newPassword: ""
-    })
-
-
-    const [formErrors, setFormErrors] = useState<IForm>({
-        name: "",
-        oldPassword: "",
-        newPassword: ""
-    })
-
-    const [submitionError, setSubmitionError] = useState("");
-
-    useEffect(() => {
-        if (!isOnline) setSubmitionError("You are offline")
-        else setSubmitionError("")
-    }, [isOnline])
-
-
-
-    /**
-     * updates {@link formValues} values
-     * @param property one of the property name(or key) of {@link formState}
-     */
-    const handleChange = (property: keyof IForm, e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormValues({ ...formValues, [property]: e.target.value })
-    }
+    const {
+        formValues,
+        formErrors, setFormErrors,
+        submitionError, setSubmitionError,
+        loading, setLoading,
+        handleChange
+    } = useForm({ initialValues })
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -183,7 +162,8 @@ const SettingsPage = () => {
                 ))}
 
 
-                <FormButton text="Update" type="submit" variant="filled" className={styles.button} disabled={!isOnline} />
+                <FormButton text="Update" type="submit" variant="filled" className={styles.button}
+                    disabled={!isOnline} loading={loading} />
 
             </form>
 

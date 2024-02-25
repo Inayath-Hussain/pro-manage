@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import z from "zod";
 import styles from "./common.module.css";
@@ -9,6 +8,7 @@ import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
 import { loginService } from "@web/services/api/loginService";
 import { useOnline } from "@web/hooks/useOnline";
+import useForm from "@web/hooks/useForm";
 
 const LoginPage = () => {
 
@@ -30,38 +30,13 @@ const LoginPage = () => {
         password: ""
     }
 
-    // form input values
-    const [formState, setFormState] = useState<IForm>({
-        email: "",
-        password: ""
-    })
-
-    // form input errors
-    const [formErrors, setFormErrors] = useState<IForm>({
-        email: "",
-        password: ""
-    })
-
-    // form submition error 
-    const [submitionError, setSubmitionError] = useState("");
-
-    // loader state for login api call
-    const [loading, setLoading] = useState(false);
-
-
-    useEffect(() => {
-        if (!isOnline) setSubmitionError("You are offline")
-        else setSubmitionError("")
-    }, [isOnline])
-
-
-    /**
-     * updates {@link formState} values
-     * @param property one of the property name(or key) of {@link formState}
-     */
-    const handleChange = (property: keyof typeof formState, e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormState({ ...formState, [property]: e.target.value })
-    }
+    const {
+        formValues,
+        formErrors, setFormErrors,
+        submitionError, setSubmitionError,
+        loading, setLoading,
+        handleChange
+    } = useForm({ initialValues });
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -69,11 +44,11 @@ const LoginPage = () => {
 
         // validate fields (formState)
         try {
-            await formSchema.parseAsync(formState)
+            await formSchema.parseAsync(formValues)
 
             setLoading(true)
 
-            await loginService(formState, signalRef.current.signal)
+            await loginService(formValues, signalRef.current.signal)
 
             setSubmitionError('')
 
