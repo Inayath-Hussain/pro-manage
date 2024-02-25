@@ -13,7 +13,7 @@ export interface IFormInputProps {
     containerclassName?: string
 }
 
-const FormInput: React.FC<IFormInputProps> = ({ inputType, placeHolderProp, onChange, required, containerclassName }) => {
+const FormInput: React.FC<IFormInputProps> = ({ inputType, placeHolderProp = "", onChange, required, containerclassName = "" }) => {
 
     let placeholder = "";
     let type: React.HTMLInputTypeAttribute = "text";

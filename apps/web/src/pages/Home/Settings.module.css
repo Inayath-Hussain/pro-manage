@@ -1,0 +1,35 @@
+@import url("@web/styles.css");
+
+.button {
+    width: 100%;
+
+    margin-top: 1rem;
+}
+
+.form {
+    width: 75%;
+    max-width: 480px;
+}
+
+.main_error_message {
+    margin-bottom: 1.8rem;
+    text-align: center;
+}
+
+.input_container {
+    margin-bottom: 1.4rem;
+}
+
+
+.page_container {
+    font-family: var(--open-sans);
+
+    padding-left: 2rem;
+}
+
+
+.form_header {
+    font-weight: 600;
+
+    margin: 1.5rem 0 1.5rem;
+}

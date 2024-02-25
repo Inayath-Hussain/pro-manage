@@ -16,6 +16,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    max-width: 640px;
 }
 
 
@@ -24,6 +26,7 @@
     color: #343434;
 
     margin-bottom: 2rem;
+    margin-top: 1.3rem;
 }
 
 .form_input {

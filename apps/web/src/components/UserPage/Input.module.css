@@ -1,6 +1,9 @@
 .input_container {
     position: relative;
     /* margin-bottom: 1.2rem; */
+
+    --max-width: 480px;
+    max-width: var(--max-width);
 }
 
 
@@ -10,7 +13,7 @@
 
     box-sizing: border-box;
     width: 100%;
-    max-width: 480px;
+    max-width: var(--max-width);
     padding: 0.7rem 3.2rem;
     padding-right: 2.5rem;
 

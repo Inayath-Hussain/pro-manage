@@ -23,7 +23,7 @@ const RegisterPage = () => {
 
     // schema to validate form values
     const formSchema = z.object({
-        name: z.string({ required_error: "name is required" }),
+        name: z.string({ required_error: "name is required" }).trim().min(1, "name is required"),
         email: z.string({ required_error: "email is required" }).email({ message: "Invalid email" }),
         password: passwordSchema("password"),
         confirmPassword: passwordSchema("confirmPassword"),
