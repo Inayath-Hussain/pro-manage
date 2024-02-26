@@ -2,7 +2,7 @@ import { ILoginMiddlewareError } from "@pro-manage/common-interfaces"
 
 import { createRequest, createResponse } from "node-mocks-http"
 import { validateLoginBody } from "./login"
-import { validateRequest } from "./middleware.test.helper"
+import { validateRequest } from "../middleware.test.helper"
 
 
 

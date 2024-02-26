@@ -5,7 +5,7 @@ import { userService } from "../services/user"
 import { IUser, User } from "../models/user"
 import { Ierror } from "../utilities/requestHandlers/errorHandler"
 import { verifyAccessToken } from "../utilities/tokens/accessToken"
-import { verifyRefreshTOken } from "../utilities/tokens/refreshToken"
+import { verifyRefreshToken } from "../utilities/tokens/refreshToken"
 
 
 const mockedGetUserByEmail = jest.spyOn(userService, "getUserByEmail")
@@ -84,12 +84,15 @@ describe("login controller", () => {
         const { accessToken, refreshToken } = mockedRes.cookies
 
         // verify auth cookies
-        const accessPayload = await verifyAccessToken(accessToken.value)
-        const refreshPayload = await verifyRefreshTOken(refreshToken.value)
+        const accessResult = await verifyAccessToken(accessToken.value)
+        const refreshResult = await verifyRefreshToken(refreshToken.value)
 
         // assert auth cookies
-        expect(accessPayload.payload.email).toBe(userObj.email)
-        expect(refreshPayload.payload.email).toBe(userObj.email)
+        expect(accessResult.valid).toBe(true)
+        expect(refreshResult.valid).toBe(true)
+
+        if (accessResult.valid) expect(accessResult.payload.email).toBe(userObj.email)
+        if (refreshResult.valid) expect(refreshResult.payload.email).toBe(userObj.email)
 
     })
 

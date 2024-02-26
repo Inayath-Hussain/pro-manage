@@ -1,5 +1,5 @@
 import { createRequest, createResponse } from "node-mocks-http"
-import { validateRequest } from "./middleware.test.helper"
+import { validateRequest } from "../middleware.test.helper"
 import { validateRegisterBody } from "./register"
 import { IRegisterMiddlewareError } from "@pro-manage/common-interfaces"
 

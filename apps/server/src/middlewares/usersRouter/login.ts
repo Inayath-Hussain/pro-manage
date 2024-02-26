@@ -1,6 +1,6 @@
 import { body, checkExact } from 'express-validator';
-import { checkForErrors } from '../utilities/requestHandlers/checkForErrors';
-import { IValidateRequestMiddlewares } from './interface';
+import { checkForErrors } from '../../utilities/requestHandlers/checkForErrors';
+import { IValidateRequestMiddlewares } from '../interface';
 
 
 export const validateLoginBody: IValidateRequestMiddlewares = [
