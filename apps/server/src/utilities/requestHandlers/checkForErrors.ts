@@ -13,14 +13,12 @@ export const checkForErrors: RequestHandler = (req, res, next) => {
 
 
         result.array().forEach((r: ValidationError) => {
-            if (r.type === "field") {
-                fieldErrors[r.path] = r.msg
-            }
+
+            // when any of the validation field fails
+            if (r.type === "field") fieldErrors[r.path] = r.msg
 
             // error occurred if there is a field present in the request which is not defined in schema 
-            if (r.type === "unknown_fields") {
-                fieldErrors.unknownField = r.msg
-            }
+            if (r.type === "unknown_fields") fieldErrors.unknownField = r.msg
         })
 
 

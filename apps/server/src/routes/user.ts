@@ -1,10 +1,13 @@
 import { Router } from "express";
-import { loginController } from "../controllers/login";
-import { validateLoginBody } from "../middlewares/users/login";
-import { validateRegisterBody } from "../middlewares/users/register";
+import { loginController } from "../controllers/userRouter/login";
+import { logoutController } from "../controllers/userRouter/logout";
+import { registerController } from "../controllers/userRouter/register";
+import { validateLoginBody } from "../middlewares/usersRouter/login";
+import { validateRegisterBody } from "../middlewares/usersRouter/register";
 import { tryCatchWrapper } from "../utilities/requestHandlers/tryCatchWrapper";
-import { registerController } from "../controllers/register";
-import { logoutController } from "../controllers/logout";
+import { authMiddleware } from "../middlewares/common/auth";
+import { validateUpdateBody } from "../middlewares/usersRouter/update";
+import { userUpdateController } from "../controllers/userRouter/update";
 
 const router = Router();
 
@@ -18,5 +21,8 @@ router.post("/register", tryCatchWrapper(registerController))   // controller
 
 router.post("/logout", logoutController)    // controller
 
+
+router.patch("/update", authMiddleware, validateUpdateBody)   //middleware
+router.patch("/update", userUpdateController)     // controller
 
 export { router as userRouter }

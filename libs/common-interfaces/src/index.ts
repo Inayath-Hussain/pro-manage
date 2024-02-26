@@ -13,6 +13,12 @@ export interface IRegisterBody {
 }
 
 
+export interface IUpdateBody {
+    name?: string
+    oldPassword?: string
+    newPassword?: string
+}
+
 interface IUnknownField {
     unknownField: string
 }
@@ -25,4 +31,10 @@ export interface ILoginMiddlewareError {
 export interface IRegisterMiddlewareError {
     message: string
     errors: Partial<IRegisterBody & IUnknownField>
+}
+
+
+export interface IUpdateMiddlewareError {
+    message: string
+    errors: Partial<IUpdateBody>
 }

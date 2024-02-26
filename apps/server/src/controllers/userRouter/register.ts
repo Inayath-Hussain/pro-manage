@@ -1,12 +1,12 @@
 import { IRegisterBody } from "@pro-manage/common-interfaces";
 import { genSalt, hash } from "bcrypt";
 import { RequestHandler } from "express";
-import { userService } from "../services/user";
-import { Ierror } from "../utilities/requestHandlers/errorHandler";
-import { createAccessToken } from "../utilities/tokens/accessToken";
-import { createRefreshToken } from "../utilities/tokens/refreshToken";
-import { signAccessTokenCookie } from "../utilities/cookies/signAccessToken";
-import { signRefreshTokenCookie } from "../utilities/cookies/signRefreshToken";
+import { userService } from "../../services/user";
+import { Ierror } from "../../utilities/requestHandlers/errorHandler";
+import { createAccessToken } from "../../utilities/tokens/accessToken";
+import { createRefreshToken } from "../../utilities/tokens/refreshToken";
+import { signAccessTokenCookie } from "../../utilities/cookies/signAccessToken";
+import { signRefreshTokenCookie } from "../../utilities/cookies/signRefreshToken";
 
 export const registerController: RequestHandler<{}, {}, IRegisterBody> = async (req, res, next) => {
     const { email, name, password } = req.body

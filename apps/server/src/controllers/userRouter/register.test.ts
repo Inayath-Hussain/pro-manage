@@ -1,11 +1,11 @@
 import { IRegisterBody } from "@pro-manage/common-interfaces"
 import { createRequest, createResponse } from "node-mocks-http"
 import { registerController } from "./register"
-import { userService } from "../services/user"
-import { Ierror } from "../utilities/requestHandlers/errorHandler"
-import { IUser, User } from "../models/user"
-import { verifyAccessToken } from "../utilities/tokens/accessToken"
-import { verifyRefreshToken } from "../utilities/tokens/refreshToken"
+import { userService } from "../../services/user"
+import { Ierror } from "../../utilities/requestHandlers/errorHandler"
+import { IUser, User } from "../../models/user"
+import { verifyAccessToken } from "../../utilities/tokens/accessToken"
+import { verifyRefreshToken } from "../../utilities/tokens/refreshToken"
 
 const mockedGetUserByEmail = jest.spyOn(userService, "getUserByEmail")
 const mockedCreateUser = jest.spyOn(userService, "createUser")

@@ -1,11 +1,11 @@
 import { genSalt, hash } from "bcrypt"
 import { createRequest, createResponse } from "node-mocks-http"
 import { loginController } from "./login"
-import { userService } from "../services/user"
-import { IUser, User } from "../models/user"
-import { Ierror } from "../utilities/requestHandlers/errorHandler"
-import { verifyAccessToken } from "../utilities/tokens/accessToken"
-import { verifyRefreshToken } from "../utilities/tokens/refreshToken"
+import { userService } from "../../services/user"
+import { IUser, User } from "../../models/user"
+import { Ierror } from "../../utilities/requestHandlers/errorHandler"
+import { verifyAccessToken } from "../../utilities/tokens/accessToken"
+import { verifyRefreshToken } from "../../utilities/tokens/refreshToken"
 
 
 const mockedGetUserByEmail = jest.spyOn(userService, "getUserByEmail")
