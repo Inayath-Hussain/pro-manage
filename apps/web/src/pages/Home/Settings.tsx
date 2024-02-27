@@ -1,16 +1,23 @@
 import { Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 import z from "zod";
 import FormButton from "@web/components/UserPage/Button";
 import FormError from "@web/components/UserPage/ErrorMsg";
 import FormInput, { IFormInputProps } from "@web/components/UserPage/Input";
 import { useOnline } from "@web/hooks/useOnline";
-
-import styles from "./Settings.module.css"
 import useForm from "@web/hooks/useForm";
+import { useAbortController } from "@web/hooks/useAbortContoller";
+import { userUpdateService } from "@web/services/api/userUpdateService";
+import { routes } from "@web/routes";
+import styles from "./Settings.module.css"
+
+import { UserUpdateMiddlewareError } from "@pro-manage/common-interfaces";
 
 const SettingsPage = () => {
 
+    const navigate = useNavigate();
     const { isOnline } = useOnline();
+    const { signalRef } = useAbortController();
 
     const passwordSchema = z.string().trim()
 
@@ -20,60 +27,56 @@ const SettingsPage = () => {
         newPassword: passwordSchema
     }).superRefine(({ name, newPassword, oldPassword }, ctx) => {
 
-
-        // if both name and passwords field are empty then issue an error
-        if (name === "" && newPassword === "" && oldPassword === "") {
-            return ctx.addIssue({
+        // function to create zod custom error
+        const addCustomIssue = (path: string, message: string) => {
+            ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                path: ["name", "oldPassword", "newPassword"],
-                message: "Atleast Name or passwords should be filled to update"
+                path: [path],
+                message
             })
         }
+
+
+        /**
+         * function to create zod's "too small issue" for password fields when value's length is less than 8
+         *   */
+        const addPasswordIssue = (path: string) => {
+            ctx.addIssue({
+                code: z.ZodIssueCode.too_small,
+                minimum: 8,
+                type: "string",
+                inclusive: false,
+                path: [path],
+                message: "Must be atleast 8 letters long"
+            })
+        }
+
+
+        // if both name and passwords field are empty then issue an error and return
+        if (name === "" && newPassword === "" && oldPassword === "")
+            return addCustomIssue("all", "Atleast Name or passwords should be filled to update")
 
         // if only one of the password field has value then issue an error
         if (newPassword !== "" || oldPassword !== "") {
 
             // if newPassword is empty then issue a zod validation error
-            if (newPassword === "") ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ["newPassword"],
-                message: "New Password must be provided"
-            })
+            if (newPassword === "")
+                addCustomIssue("newPassword", "New Password must be provided")
+
 
             // if oldPassword is empty then issue a zod validation error
-            if (oldPassword === "") ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ["oldPassword"],
-                message: "Old Password must be provided"
-            })
+            if (oldPassword === "")
+                addCustomIssue("oldPassword", "Old Password must be provided")
 
 
-            // if executor reaches here then it means both oldPassword and newPassword are provided.
-            // Now check if both has atleast 8 characters
-            if (newPassword!.length < 8) ctx.addIssue({
-                code: z.ZodIssueCode.too_small,
-                minimum: 8,
-                type: "string",
-                inclusive: false,
-                path: ["newPassword"],
-                message: "Must be atleast 8 letters long"
-            })
+            // Now check if each of the password fields have atleast 8 characters
+            if (newPassword!.length < 8) addPasswordIssue("newPassword")
 
-            if (oldPassword!.length < 8) ctx.addIssue({
-                code: z.ZodIssueCode.too_small,
-                minimum: 8,
-                type: "string",
-                inclusive: false,
-                path: ["oldPassword"],
-                message: "Must be atleast 8 letters long"
-            })
+            if (oldPassword!.length < 8) addPasswordIssue("oldPassword")
 
 
-            if (oldPassword === newPassword) ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ["newPassword"],
-                message: "New password cannot be same as present password"
-            })
+            if (oldPassword === newPassword)
+                addCustomIssue("newPassword", "New password cannot be same as present password")
         }
 
     })
@@ -102,20 +105,30 @@ const SettingsPage = () => {
             // validate formValues
             await formSchmea.parse(formValues)
 
-            // use update service
+            setLoading(true)
 
+            // use update service
+            await userUpdateService(formValues, signalRef.current.signal)
+
+            setLoading(false)
             setFormErrors(initialValues)
+            setSubmitionError("")
+
+            // toast for successful user updation
         }
         catch (ex) {
-            if (ex instanceof z.ZodError) {
-                const { name, oldPassword, newPassword } = ex.formErrors.fieldErrors
+            setLoading(false)
 
-                // zod error with name as key means all the input fields are empty
-                if (name) {
+            if (ex instanceof z.ZodError) {
+                const { oldPassword, newPassword, all } = ex.formErrors.fieldErrors
+
+                // if zod field error contains a key called "all" then it means all the input fields are empty.
+                if (all) {
                     setFormErrors(initialValues)
-                    return setSubmitionError(name[0])
+                    return setSubmitionError(all[0])
                 }
 
+                // if executor reaches here then password fields did not pass their schema
                 setSubmitionError("");
 
                 setFormErrors({
@@ -123,6 +136,22 @@ const SettingsPage = () => {
                     oldPassword: oldPassword ? oldPassword[0] : "",
                     newPassword: newPassword ? newPassword[0] : ""
                 })
+            }
+
+            // if error is for input values
+            else if (ex instanceof UserUpdateMiddlewareError) {
+                setFormErrors(ex.errors)
+                setSubmitionError("")
+            }
+
+            // if unauthorized error(invalid auth tokens)
+            else if (ex === false) {
+                navigate(routes.user.login)
+            }
+
+            else {
+                setFormErrors(initialValues)
+                setSubmitionError(ex as string)
             }
         }
     }
