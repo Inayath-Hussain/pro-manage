@@ -12,13 +12,35 @@
             ],
             "options": {
                 "platform": "node",
+                "format": [
+                    "cjs"
+                ],
                 "bundle": false,
                 "generatePackageJson": true,
                 "outputPath": "dist/apps/server",
                 "tsConfig": "apps/server/tsconfig.app.json",
                 "main": "apps/server/src/server.ts",
                 "esbuildOptions": {
-                    "sourcemap": false
+                    "sourcemap": false,
+                    "outExtension": {
+                        ".js": ".js"
+                    }
+                }
+            }
+        },
+        "serve": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "options": {
+                "buildTarget": "server:build",
+                "watch": true
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "server:build:development"
+                },
+                "production": {
+                    "buildTarget": "server:build:production"
                 }
             }
         }

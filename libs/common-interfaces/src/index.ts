@@ -1,4 +1,5 @@
 export * from './lib/common-interfaces';
+export * from "./lib/userUpdate"
 
 export interface ILoginBody {
     email: string
@@ -10,13 +11,6 @@ export interface IRegisterBody {
     name: string
     email: string
     password: string
-}
-
-
-export interface IUpdateBody {
-    name?: string
-    oldPassword?: string
-    newPassword?: string
 }
 
 interface IUnknownField {
@@ -31,10 +25,4 @@ export interface ILoginMiddlewareError {
 export interface IRegisterMiddlewareError {
     message: string
     errors: Partial<IRegisterBody & IUnknownField>
-}
-
-
-export interface IUpdateMiddlewareError {
-    message: string
-    errors: Partial<IUpdateBody>
 }

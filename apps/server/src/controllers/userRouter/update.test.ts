@@ -7,7 +7,7 @@ import { IUpdateBody } from "@pro-manage/common-interfaces"
 import { User } from "../../models/user"
 
 
-const mockedGetUserByEmail = jest.spyOn(userService, "getUserByEmail")
+const mockedGetUserByEmail = jest.spyOn(userService, "getUserByEmail");
 
 describe("update controller", () => {
     test("should call next with 401 response when email doesn't exist in db", async () => {
@@ -30,16 +30,18 @@ describe("update controller", () => {
 
     test("should call next with 400 response if oldPassword doesn't match", async () => {
         const email = "test1@domain.com"
-        const req = createRequest({ body: { name: "test1", oldPassword: "Heelo" } as IUpdateBody })
+        const req = createRequest({ body: { name: "test1", oldPassword: "Heelo", newPassword: "newPppassswword" } as IUpdateBody })
         req.email = email
         const res = createResponse()
         const next = jest.fn();
 
         const errorObj: Ierror = { statusCode: 400, message: "Incorrect password" }
 
-        mockedGetUserByEmail.mockResolvedValue(new User({ email, name: "test1" }))
-        const mockedCompare = jest.fn().mockResolvedValue(false);
+        const userDoc = new User({ email, name: "test1", password: "uyvy8bi" })
 
+        mockedGetUserByEmail.mockResolvedValue(userDoc)
+
+        const mockedCompare = jest.fn().mockResolvedValue(false);
         (bcrypt.compare as jest.Mock) = mockedCompare
 
         await userUpdateController(req, res, next)

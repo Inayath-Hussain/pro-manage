@@ -10,24 +10,16 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@pro-manage/common-interfaces": [
-        "libs/common-interfaces/src/index.ts"
+        "./libs/common-interfaces/src/index.ts"
       ],
-      "@web/*": [
-        "./apps/web/src/*"
-      ]
+      "@web/*": ["./apps/web/src/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }
