@@ -13,7 +13,7 @@
     align-items: center;
     column-gap: var(--column-gap);
 
-    padding-left: 2rem !important;
+    padding-left: 1rem !important;
 }
 
 .header {
@@ -59,7 +59,7 @@
 
     position: absolute;
     bottom: 5rem;
-    margin-left: 2rem;
+    margin-left: 1rem;
     padding: 0 !important;
 }
 
@@ -74,4 +74,16 @@
     border-right: 3px solid #EDF5FE;
 
     position: relative;
+}
+
+
+@media screen and (min-width: 1024px) {
+    .flex {
+        padding-left: 2rem !important;
+    }
+
+    .logout_button {
+        margin-left: 2rem;
+        padding: 0 !important;
+    }
 }

@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import z from "zod";
 import FormButton from "@web/components/UserPage/Button";
@@ -7,13 +8,15 @@ import FormInput, { IFormInputProps } from "@web/components/UserPage/Input";
 import { useOnline } from "@web/hooks/useOnline";
 import useForm from "@web/hooks/useForm";
 import { useAbortController } from "@web/hooks/useAbortContoller";
-import { userUpdateService } from "@web/services/api/user/userUpdateService";
 import { routes } from "@web/routes";
-import styles from "./Settings.module.css"
+import { userUpdateService } from "@web/services/api/user/userUpdateService";
+import { userInfoSelector } from "@web/store/slices/userInfoSlice";
+
+import commonStyle from "./Index.module.css";
+import styles from "./Settings.module.css";
 
 import { UserUpdateMiddlewareError } from "@pro-manage/common-interfaces";
-import { useSelector } from "react-redux";
-import { userInfoSelector } from "@web/store/slices/userInfoSlice";
+
 
 const SettingsPage = () => {
 
@@ -179,9 +182,9 @@ const SettingsPage = () => {
     const disabled = userInfo.status !== "success" || !isOnline
 
     return (
-        <section className={styles.page_container}>
+        <section className={commonStyle.page_container}>
             <form onSubmit={handleSubmit} className={styles.form}>
-                <h1 className={styles.form_header}>Settings</h1>
+                <h1 className={commonStyle.page_header}>Settings</h1>
 
                 <FormError message={submitionError} className={styles.main_error_message} />
 
