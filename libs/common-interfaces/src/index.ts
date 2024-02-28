@@ -1,5 +1,6 @@
 export * from './lib/common-interfaces';
-export * from "./lib/userUpdate"
+export * from "./lib/userUpdate";
+export * from "./lib/userInfo";
 
 export interface ILoginBody {
     email: string
