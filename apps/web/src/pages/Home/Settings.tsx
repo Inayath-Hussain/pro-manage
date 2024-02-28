@@ -7,15 +7,19 @@ import FormInput, { IFormInputProps } from "@web/components/UserPage/Input";
 import { useOnline } from "@web/hooks/useOnline";
 import useForm from "@web/hooks/useForm";
 import { useAbortController } from "@web/hooks/useAbortContoller";
-import { userUpdateService } from "@web/services/api/userUpdateService";
+import { userUpdateService } from "@web/services/api/user/userUpdateService";
 import { routes } from "@web/routes";
 import styles from "./Settings.module.css"
 
 import { UserUpdateMiddlewareError } from "@pro-manage/common-interfaces";
+import { useSelector } from "react-redux";
+import { userInfoSelector } from "@web/store/slices/userInfoSlice";
 
 const SettingsPage = () => {
 
+    const userInfo = useSelector(userInfoSelector)
     const navigate = useNavigate();
+
     const { isOnline } = useOnline();
     const { signalRef } = useAbortController();
 
@@ -28,13 +32,12 @@ const SettingsPage = () => {
     }).superRefine(({ name, newPassword, oldPassword }, ctx) => {
 
         // function to create zod custom error
-        const addCustomIssue = (path: string, message: string) => {
+        const addCustomIssue = (path: string, message: string) =>
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 path: [path],
                 message
             })
-        }
 
 
         /**
@@ -160,18 +163,20 @@ const SettingsPage = () => {
         inputKey: keyof IForm
         inputType: IFormInputProps["inputType"]
         placeHolderProp: IFormInputProps["placeHolderProp"]
-        required: IFormInputProps["required"]
+        required: IFormInputProps["required"],
+        defaultValue?: IFormInputProps["defaultValue"]
     }
 
 
     // form inputs
     const inputs: IinputsArray[] = [
-        { inputKey: "name", inputType: "name", placeHolderProp: "Name", required: false },
+        { inputKey: "name", inputType: "name", placeHolderProp: "Name", required: false, defaultValue: userInfo.name },
         { inputKey: "oldPassword", inputType: "password", placeHolderProp: "Old Password", required: false },
         { inputKey: "newPassword", inputType: "password", placeHolderProp: "New Password", required: false },
     ]
 
 
+    const disabled = userInfo.status !== "success" || !isOnline
 
     return (
         <section className={styles.page_container}>
@@ -184,7 +189,7 @@ const SettingsPage = () => {
                 {inputs.map(inp => (
                     <Fragment key={inp.inputKey}>
                         <FormInput inputType={inp.inputType} onChange={e => handleChange(inp.inputKey, e)} required={inp.required}
-                            placeHolderProp={inp.placeHolderProp} containerclassName={styles.input_container} />
+                            placeHolderProp={inp.placeHolderProp} containerclassName={styles.input_container} defaultValue={inp.defaultValue} />
 
                         <FormError message={formErrors[inp.inputKey]} />
                     </Fragment>
@@ -192,7 +197,7 @@ const SettingsPage = () => {
 
 
                 <FormButton text="Update" type="submit" variant="filled" className={styles.button}
-                    disabled={!isOnline} loading={loading} />
+                    disabled={disabled} loading={loading} />
 
             </form>
 

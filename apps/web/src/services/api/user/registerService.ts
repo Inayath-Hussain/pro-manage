@@ -1,8 +1,8 @@
 import { IRegisterBody, IRegisterMiddlewareError } from "@pro-manage/common-interfaces";
 
 import { AxiosError, GenericAbortSignal, HttpStatusCode } from "axios";
-import { axiosInstance } from "./instance";
-import { apiUrls } from "./URLs";
+import { axiosInstance } from "../instance";
+import { apiUrls } from "../URLs";
 
 
 /**

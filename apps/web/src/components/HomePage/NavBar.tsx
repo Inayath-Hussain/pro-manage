@@ -11,7 +11,7 @@ import { IIconProps } from "../Icons/interface";
 
 import styles from "./NavBar.module.css"
 import { useAbortController } from "@web/hooks/useAbortContoller";
-import { logoutService } from "@web/services/api/logoutService";
+import { logoutService } from "@web/services/api/user/logoutService";
 import { useOnline } from "@web/hooks/useOnline";
 
 

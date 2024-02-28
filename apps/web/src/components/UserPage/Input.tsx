@@ -11,9 +11,10 @@ export interface IFormInputProps {
     onChange: React.ChangeEventHandler<HTMLInputElement>
     required: boolean
     containerclassName?: string
+    defaultValue?: string
 }
 
-const FormInput: React.FC<IFormInputProps> = ({ inputType, placeHolderProp = "", onChange, required, containerclassName = "" }) => {
+const FormInput: React.FC<IFormInputProps> = ({ inputType, placeHolderProp = "", onChange, required, containerclassName = "", defaultValue = "" }) => {
 
     let placeholder = "";
     let type: React.HTMLInputTypeAttribute = "text";
@@ -52,7 +53,7 @@ const FormInput: React.FC<IFormInputProps> = ({ inputType, placeHolderProp = "",
 
             <input className={`${styles.input}`}
                 placeholder={placeholder} type={type} required={required}
-                onChange={onChange} />
+                defaultValue={defaultValue} onChange={onChange} />
 
             {/* password hide button */}
             {inputType === "password" && <img src={HideLogo} alt="" className={styles.hide_logo} onClick={togglePasswordDisplay}

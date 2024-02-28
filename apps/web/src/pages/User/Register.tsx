@@ -6,7 +6,7 @@ import FormError from "@web/components/UserPage/ErrorMsg";
 import FormInput, { IFormInputProps } from "@web/components/UserPage/Input";
 import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
-import { registerService } from "@web/services/api/registerService";
+import { registerService } from "@web/services/api/user/registerService";
 import { useOnline } from "@web/hooks/useOnline";
 import useForm from "@web/hooks/useForm";
 
