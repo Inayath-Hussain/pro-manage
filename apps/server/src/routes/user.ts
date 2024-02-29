@@ -1,19 +1,19 @@
 import { Router } from "express";
-import { loginController } from "../controllers/userRouter/login";
-import { validateLoginBody } from "../middlewares/usersRouter/login";
+import { loginController } from "../controllers/users/login";
+import { validateLoginBody } from "../middlewares/users/login";
 
-import { logoutController } from "../controllers/userRouter/logout";
+import { logoutController } from "../controllers/users/logout";
 
-import { registerController } from "../controllers/userRouter/register";
-import { validateRegisterBody } from "../middlewares/usersRouter/register";
+import { registerController } from "../controllers/users/register";
+import { validateRegisterBody } from "../middlewares/users/register";
 
 import { tryCatchWrapper } from "../utilities/requestHandlers/tryCatchWrapper";
 import { authMiddleware } from "../middlewares/common/auth";
 
-import { validateUpdateBody } from "../middlewares/usersRouter/update";
-import { userUpdateController } from "../controllers/userRouter/update";
+import { validateUpdateBody } from "../middlewares/users/update";
+import { userUpdateController } from "../controllers/users/update";
 
-import { userInfoController } from "../controllers/userRouter/info";
+import { userInfoController } from "../controllers/users/info";
 
 const router = Router();
 

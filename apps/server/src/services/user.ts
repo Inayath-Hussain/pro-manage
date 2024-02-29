@@ -36,7 +36,7 @@ class UserService {
             userDoc.password = hashedPassword
         }
 
-        await userDoc.save();
+        return await userDoc.save();
     }
 }
 

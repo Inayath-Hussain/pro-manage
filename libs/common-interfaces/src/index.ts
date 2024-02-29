@@ -2,6 +2,8 @@ export * from './lib/common-interfaces';
 export * from "./lib/userUpdate";
 export * from "./lib/userInfo";
 
+export * from "./lib/tasks/addTask"
+
 export interface ILoginBody {
     email: string
     password: string
