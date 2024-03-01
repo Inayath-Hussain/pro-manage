@@ -6,9 +6,12 @@ import NavBar from "@web/components/HomePage/NavBar";
 import { useAbortController } from "@web/hooks/useAbortContoller";
 import { AppDispatch } from "@web/store";
 import { getUserInfo, userInfoSelector } from "@web/store/slices/userInfoSlice";
+import { renewTask } from "@web/store/slices/taskSlice"
+
+import { routes } from "@web/routes";
+import { getTaskService } from "@web/services/api/task/getTask";
 
 import styles from "./Index.module.css";
-import { routes } from "@web/routes";
 
 
 const HomePage = () => {
@@ -20,6 +23,7 @@ const HomePage = () => {
 
     const { signalRef } = useAbortController();
 
+    // for userInfo
     useEffect(() => {
         const call = async () => {
             if (userInfo.status === "idle") {
@@ -28,6 +32,27 @@ const HomePage = () => {
                     if (reason === 401) navigate(routes.user.login)
                 })
             }
+        }
+
+        call()
+    }, [])
+
+
+    // get all user's tasks
+    useEffect(() => {
+        const call = async () => {
+            try {
+                const result = await getTaskService("week", signalRef.current.signal)
+
+                dispatch(renewTask(result))
+            }
+            catch (ex) {
+                console.log(ex)
+
+                if (ex === false) navigate(routes.user.login)
+            }
+
+
         }
 
         call()

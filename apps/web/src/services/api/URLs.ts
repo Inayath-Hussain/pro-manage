@@ -3,5 +3,8 @@ export const apiUrls = {
     registerURL: "/api/user/register",
     logoutURL: "/api/user/logout",
     userUpdate: "/api/user/update",
-    userInfo: "/api/user/info"
+    userInfo: "/api/user/info",
+
+    // tasks
+    getTask: "/api/task"
 }

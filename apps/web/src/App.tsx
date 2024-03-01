@@ -8,6 +8,7 @@ import UserPage from './pages/User/Index';
 import LoginPage from './pages/User/Login';
 import RegisterPage from './pages/User/Register';
 import { routes } from './routes';
+import BoardPage from './pages/Home/Board';
 
 export function App() {
 
@@ -21,6 +22,7 @@ export function App() {
         </Route>
 
         <Route path={routes.home} element={<HomePage />}>
+          <Route index element={<BoardPage />} />
           <Route path={routes.analytics} element={<AnalyticsPage />} />
           <Route path={routes.settings} element={<SettingsPage />} />
         </Route>
