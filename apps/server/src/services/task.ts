@@ -1,12 +1,16 @@
 import { IAddTaskBody, IGetTaskQuery } from "@pro-manage/common-interfaces";
 
-import { Task } from "../models/task";
-import { Types } from "mongoose";
+import { ITask, Task } from "../models/task";
+import { Types, FilterQuery } from "mongoose";
 
 interface IAddTaskPayload extends IAddTaskBody {
     user: Types.ObjectId
 }
 
+interface IGetTasks {
+    user: Types.ObjectId,
+    filter?: IGetTaskQuery["filter"] | undefined
+}
 class TaskService {
 
     /**
@@ -24,35 +28,49 @@ class TaskService {
         return newDoc.save()
     }
 
+    /**
+     * returns all tasks of a user from db.
+     * 
+     * if filter is provided then only the tasks satisfying the filter will be returned.
+     */
+    async getTasks({ user, filter = undefined }: IGetTasks) {
+        const query: FilterQuery<ITask> = {}
+        query.user = user
 
-    async getTasks(user: Types.ObjectId) {
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0);
+        // if filter query is provided
+        if (filter) {
 
-        return await Task.find({ user, createdAt: { $gte: todayStart } }).select({ user: 0, __v: 0 })
+            // today's date and time is set to 12 am
+            const date = new Date();
+            date.setHours(0, 0, 0, 0);
+
+            switch (filter) {
+                case ("day"):
+                    break;
+
+                case ("week"):
+                    date.setDate(date.getDate() - 7)
+                    break;
+
+                case ("month"):
+                    date.setDate(date.getDate() - 30)
+                    break;
+            }
+            query.createdAt = { $gt: date }
+        }
+
+        return await Task.find(query).select({ user: 0, __v: 0 })
     }
 
 
-    async getTasksWithFilter(user: Types.ObjectId, filter: IGetTaskQuery["filter"]) {
+    /**
+     * returns task document containing the provided user and taskID
+     * @param user user id
+     * @param taskID task id in string format
+     */
+    async getTasksByID(user: Types.ObjectId, taskID: string) {
 
-        // today's date and time is set to 12 am
-        const date = new Date();
-        date.setHours(0, 0, 0, 0);
-
-        switch (filter) {
-            case ("day"):
-                break;
-
-            case ("week"):
-                date.setDate(date.getDate() - 7)
-                break;
-
-            case ("month"):
-                date.setDate(date.getDate() - 30)
-                break;
-        }
-
-        return await Task.find({ user, createdAt: { $gt: date } }).select({ user: 0, __v: 0 });
+        return await Task.findOne({ user, _id: taskID }).select({ user: 0, __v: 0 });
     }
 }
 

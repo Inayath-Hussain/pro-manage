@@ -19,7 +19,7 @@ export const getTaskController: RequestHandler<{}, {}, {}, IGetTaskQuery> = asyn
     }
 
 
-    const tasks = await taskService.getTasksWithFilter(userDoc._id, filter)
+    const tasks = await taskService.getTasks({ user: userDoc._id, filter })
 
     return res.status(200).json(tasks)
 }
