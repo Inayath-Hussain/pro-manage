@@ -2,8 +2,9 @@ export * from './lib/common-interfaces';
 export * from "./lib/userUpdate";
 export * from "./lib/userInfo";
 
-export * from "./lib/tasks/addTask"
-export * from "./lib/tasks/getTask"
+export * from "./lib/tasks/addTask";
+export * from "./lib/tasks/getTask";
+export * from "./lib/tasks/updateTask";
 
 export interface ILoginBody {
     email: string

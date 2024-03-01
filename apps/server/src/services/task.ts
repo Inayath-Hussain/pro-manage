@@ -1,7 +1,7 @@
-import { IAddTaskBody, IGetTaskQuery } from "@pro-manage/common-interfaces";
+import { IAddTaskBody, IGetTaskQuery, IUpdateTaskBody } from "@pro-manage/common-interfaces";
 
 import { ITask, Task } from "../models/task";
-import { Types, FilterQuery } from "mongoose";
+import { Types, FilterQuery, Document } from "mongoose";
 
 interface IAddTaskPayload extends IAddTaskBody {
     user: Types.ObjectId
@@ -11,6 +11,10 @@ interface IGetTasks {
     user: Types.ObjectId,
     filter?: IGetTaskQuery["filter"] | undefined
 }
+
+
+interface ItaskDoc extends Document, ITask { }
+
 class TaskService {
 
     /**
@@ -27,6 +31,7 @@ class TaskService {
 
         return newDoc.save()
     }
+
 
     /**
      * returns all tasks of a user from db.
@@ -71,6 +76,19 @@ class TaskService {
     async getTasksByID(user: Types.ObjectId, taskID: string) {
 
         return await Task.findOne({ user, _id: taskID }).select({ user: 0, __v: 0 });
+    }
+
+
+    async updateTask(taskDoc: ItaskDoc, payload: IUpdateTaskBody) {
+        const { title, priority, checkList, dueDate } = payload
+
+        return await taskDoc.updateOne({
+            title: title,
+            priority: priority,
+            checklist: checkList,
+            dueDate
+        })
+
     }
 }
 

@@ -65,6 +65,7 @@ export const validateCheckList = (checkList: any): Valid | InValid => {
 
 
 
+
 export const validatePriority = (priority: any): Valid | InValid => {
     switch (true) {
         // check if priority exists
@@ -82,4 +83,42 @@ export const validatePriority = (priority: any): Valid | InValid => {
         default:
             return { valid: true }
     }
+}
+
+
+
+
+export const validateTitle = (title: any): Valid | InValid => {
+    // check if title exists and is of type string
+    switch (true) {
+        case (!title):
+            return { valid: false, errorMessage: "title is required" }
+
+        case (typeof title !== "string"):
+            return { valid: false, errorMessage: "title should be type 'string'" }
+
+        default:
+            return { valid: true }
+    }
+}
+
+
+
+/**
+ * checks if dueDate exists then it is a valid string
+ */
+export const validateDueDate = (dueDate: any): Valid | InValid => {
+    if (dueDate !== undefined && !(Date.parse(dueDate))) return { valid: false, errorMessage: "Invalid date" }
+
+    return { valid: true }
+}
+
+
+
+
+
+export const validateTaskID = (id: any): Valid | InValid => {
+    if (!id) return { valid: false, errorMessage: "taskId is required" }
+
+    return { valid: true }
 }

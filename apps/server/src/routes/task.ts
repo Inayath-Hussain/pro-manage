@@ -7,6 +7,8 @@ import { getTaskController } from "../controllers/tasks/getTask";
 import { validateGetTaskQuery } from "../middlewares/tasks/getTask";
 import { deleteTaskController } from "../controllers/tasks/deleteTask";
 import { validateDeleteTaskParam } from "../middlewares/tasks/deleteTask";
+import { validateUpdateBody } from "../middlewares/users/update";
+import { updateTaskController } from "../controllers/tasks/updateTask";
 
 const router = Router();
 
@@ -16,6 +18,10 @@ router.get("/", getTaskController)      // controller
 
 router.post("/", tryCatchWrapper(authMiddleware), validateAddTaskBody)      //middlewares
 router.post("/", tryCatchWrapper(addTaskController))     // controller
+
+
+router.put("/:id", tryCatchWrapper(authMiddleware), validateUpdateBody)     // middlewares
+router.put("/:id", updateTaskController)    // controller
 
 
 router.delete("/:id", tryCatchWrapper(authMiddleware), validateDeleteTaskParam)      // middlewares

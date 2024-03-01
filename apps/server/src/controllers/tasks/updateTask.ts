@@ -1,0 +1,31 @@
+import { RequestHandler } from "express";
+import { userService } from "../../services/user";
+import { expireAccessTokenCookie } from "../../utilities/cookies/signAccessToken";
+import { expireRefreshTokenCookie } from "../../utilities/cookies/signRefreshToken";
+import { Ierror } from "../../utilities/requestHandlers/errorHandler";
+import { IUpdateTaskBody } from "@pro-manage/common-interfaces";
+import { taskService } from "../../services/task";
+
+
+export const updateTaskController: RequestHandler<{}, {}, IUpdateTaskBody> = async (req, res, next) => {
+    const email = req.email as string
+    const { body } = req
+
+    const userDoc = await userService.getUserByEmail(email)
+
+    if (userDoc === null) {
+        expireAccessTokenCookie(res)
+        expireRefreshTokenCookie(res)
+
+        return next({ statusCode: 401, message: "email doesn't exist" } as Ierror)
+    }
+
+
+    const taskDoc = await taskService.getTasksByID(userDoc._id, body.taskId)
+
+    if (taskDoc === null) return next({ statusCode: 404, message: "task doesn't exist" } as Ierror)
+
+    await taskService.updateTask(taskDoc, body)
+
+    return res.status(200).json({ message: "success" });
+}

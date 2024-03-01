@@ -1,17 +1,23 @@
-import { AddTaskMiddlewareError, IAddTaskBody } from "@pro-manage/common-interfaces"
+import { UpdateTaskMiddlewareError, IUpdateTaskBody } from "@pro-manage/common-interfaces"
 
 import { RequestHandler } from "express";
 import { trim } from "validator";
-import { validateCheckList, validateDueDate, validatePriority, validateTitle } from "./validators";
+import { validateCheckList, validateDueDate, validatePriority, validateTaskID, validateTitle } from "./validators";
 
-export const validateAddTaskBody: RequestHandler<{}, {}, IAddTaskBody> = (req, res, next) => {
 
-    let { title, checkList, priority, dueDate } = req.body;
+export const validateUpdateTaskBody: RequestHandler<{}, {}, IUpdateTaskBody> = (req, res, next) => {
+    let { taskId, title, checkList, priority, dueDate } = req.body;
 
+    if (typeof taskId === "string") taskId = trim(taskId)
     if (typeof title === "string") title = trim(title)
     if (typeof priority === "string") priority = trim(priority)
 
-    const errorObj = new AddTaskMiddlewareError("Invalid body")
+    const errorObj = new UpdateTaskMiddlewareError("Invalid body")
+
+
+    const taskIDValidationResult = validateTaskID(taskId);
+    // when title validation fails then validation error is added to errorObj
+    if (taskIDValidationResult.valid === false) errorObj.addFieldError("taskId", taskIDValidationResult.errorMessage)
 
 
     const titleValidationResult = validateTitle(title);
@@ -24,11 +30,13 @@ export const validateAddTaskBody: RequestHandler<{}, {}, IAddTaskBody> = (req, r
     if (dueDateValidationResult.valid === false) errorObj.addFieldError("dueDate", dueDateValidationResult.errorMessage)
 
 
+    // validate priority field
     const priorityValidationResult = validatePriority(priority);
     // when priority validation fails then validation error is added to errorObj
     if (priorityValidationResult.valid === false) errorObj.addFieldError("priority", priorityValidationResult.errorMessage)
 
 
+    // validate checkList field
     const checkListResult = validateCheckList(checkList)
     // when checkList validation fails then validation error is added to errorObj
     if (!checkListResult.valid) errorObj.addFieldError("checkList", checkListResult.errorMessage)
