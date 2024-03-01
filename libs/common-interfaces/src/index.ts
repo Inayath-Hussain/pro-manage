@@ -5,6 +5,7 @@ export * from "./lib/userInfo";
 export * from "./lib/tasks/addTask";
 export * from "./lib/tasks/getTask";
 export * from "./lib/tasks/updateTask";
+export * from "./lib/tasks/updateTaskStatus";
 
 export interface ILoginBody {
     email: string

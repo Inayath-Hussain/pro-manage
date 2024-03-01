@@ -31,4 +31,8 @@ export const Task = model("task", taskSchema)
 
 // @ts-ignore
 // extract priority enumValues defined in schema. Had to use ts-ignore because enumValues is not defined in mongoose types 
-export const priorityEnum = Task.schema.path("priority").enumValues as string[]
+export const priorityEnum = Task.schema.path("priority").enumValues as ITask["priority"][]
+
+// @ts-ignore
+// extract priority enumValues defined in schema. Had to use ts-ignore because enumValues is not defined in mongoose types
+export const statusEnum = Task.schema.path("status").enumValues as ITask["status"][]

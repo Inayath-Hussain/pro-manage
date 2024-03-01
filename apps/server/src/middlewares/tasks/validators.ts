@@ -1,7 +1,7 @@
 import { IAddTaskBody } from "@pro-manage/common-interfaces";
 
 // import { isDate } from "validator"
-import { priorityEnum } from "../../models/task";
+import { priorityEnum, statusEnum } from "../../models/task";
 
 interface Valid {
     valid: true
@@ -121,4 +121,26 @@ export const validateTaskID = (id: any): Valid | InValid => {
     if (!id) return { valid: false, errorMessage: "taskId is required" }
 
     return { valid: true }
+}
+
+
+
+
+export const validateStatus = (status: any): Valid | InValid => {
+    switch (true) {
+        // check if status exists
+        case (!status):
+            return { valid: false, errorMessage: "status is required" };
+
+        // if priority isn't of type string
+        case (typeof status !== "string"):
+            return { valid: false, errorMessage: "status should be type 'string'" }
+
+        // if priority value isn't one of the accepted values
+        case (!statusEnum.includes(status)):
+            return { valid: false, errorMessage: `status value should be one of '${statusEnum.join(", ")}'` }
+
+        default:
+            return { valid: true }
+    }
 }

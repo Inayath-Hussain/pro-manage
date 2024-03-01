@@ -13,6 +13,8 @@ import { validateDeleteTaskParam } from "../middlewares/tasks/deleteTask";
 
 import { updateTaskController } from "../controllers/tasks/updateTask";
 import { validateUpdateTaskBody } from "../middlewares/tasks/updateTask";
+import { validateUpdateTaskStatusBody } from "../middlewares/tasks/updateTaskStatus";
+import { updateTaskStatusController } from "../controllers/tasks/updateTaskStatus";
 
 const router = Router();
 
@@ -25,7 +27,11 @@ router.post("/", tryCatchWrapper(addTaskController))     // controller
 
 
 router.put("/", tryCatchWrapper(authMiddleware), validateUpdateTaskBody)     // middlewares
-router.put("/", updateTaskController)    // controller
+router.put("/", tryCatchWrapper(updateTaskController))    // controller
+
+
+router.patch("/", tryCatchWrapper(authMiddleware), validateUpdateTaskStatusBody)    //middlewares
+router.patch("/", tryCatchWrapper(updateTaskStatusController))      // controller
 
 
 router.delete("/:id", tryCatchWrapper(authMiddleware), validateDeleteTaskParam)      // middlewares

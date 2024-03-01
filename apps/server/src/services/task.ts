@@ -88,7 +88,13 @@ class TaskService {
             checklist: checkList,
             dueDate
         })
+    }
 
+
+    async updateTaskStatus(taskDoc: ItaskDoc, status: string) {
+        return await taskDoc.updateOne({
+            status
+        })
     }
 }
 
