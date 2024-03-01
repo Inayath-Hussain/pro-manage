@@ -20,7 +20,8 @@ const taskSchema = new Schema({
     dueDate: { type: Date, required: false },
     priority: { type: String, required: true, enum: ["high", "moderate", "low"] },
     status: { type: String, required: true, enum: ["backlog", "in-progress", "to-do", "done"], default: "to-do" },
-    checklist: [checkListSchema]
+    checklist: [checkListSchema],
+    createdAt: { type: Date, required: false, default: new Date() }
 })
 
 

@@ -3,6 +3,7 @@ export * from "./lib/userUpdate";
 export * from "./lib/userInfo";
 
 export * from "./lib/tasks/addTask"
+export * from "./lib/tasks/getTask"
 
 export interface ILoginBody {
     email: string
