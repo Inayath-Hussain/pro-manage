@@ -44,6 +44,7 @@ const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
             }
         }
         catch (ex) {
+            setLoading(false)
             switch (true) {
                 case (ex instanceof NetworkError):
                     console.log("network error toast", ex.message)
@@ -59,7 +60,6 @@ const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
 
                 default:
                     console.log(ex)
-                    setLoading(false)
             }
         }
     }

@@ -1,4 +1,4 @@
-import { priorityEnum, statusEnum } from "@pro-manage/common-interfaces";
+import { IUpdateDoneBody, priorityEnum, statusEnum } from "@pro-manage/common-interfaces";
 
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../index";
@@ -6,6 +6,7 @@ import { RootState } from "../index";
 interface IChecklist {
     description: string
     done: boolean
+    _id: string
 }
 
 export interface ITask {
@@ -41,12 +42,29 @@ const taskSlice = createSlice({
             const index = state.findIndex(s => s._id === action.payload._id)
 
             state[index].status = action.payload.status
+        },
+
+        updateDone: (state, action: PayloadAction<IUpdateDoneBody>) => {
+            const taskIndex = state.findIndex(s => s._id === action.payload.taskId)
+            const itemIndex = state[taskIndex].checklist.findIndex(c => c._id === action.payload.checkListId)
+
+            state[taskIndex].checklist[itemIndex].done = action.payload.done
+        },
+
+        removeTask: (state, action: PayloadAction<{ _id: string }>) => {
+            state = state.filter(s => s._id !== action.payload._id)
+        },
+
+        removeCheckListItem: (state, action: PayloadAction<{ taskId: string, itemID: string }>) => {
+            const index = state.findIndex(s => s._id === action.payload.taskId)
+
+            state[index].checklist = state[index].checklist.filter(c => c._id !== action.payload.itemID)
         }
     }
 })
 
 
-export const { renewTask, updateTaskStatus } = taskSlice.actions
+export const { renewTask, updateTaskStatus, updateDone, removeTask, removeCheckListItem } = taskSlice.actions
 
 export const taskSelector = (state: RootState) => state.tasks
 
