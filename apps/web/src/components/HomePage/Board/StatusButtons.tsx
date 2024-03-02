@@ -62,12 +62,6 @@ const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
                     setLoading(false)
             }
         }
-
-
-
-        // error
-        // false - navigate to login
-        // 
     }
 
 

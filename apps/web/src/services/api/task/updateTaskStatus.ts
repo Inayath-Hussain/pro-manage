@@ -2,6 +2,7 @@ import { IUpdateTaskStatusBody } from "@pro-manage/common-interfaces";
 import { apiUrls } from "../URLs";
 import { axiosInstance } from "../instance";
 import { AxiosError, GenericAbortSignal } from "axios";
+import { NetworkError } from "../errors";
 
 
 export class TaskDonotExist {
@@ -31,9 +32,11 @@ export const updateTaskStatusService = async (payload: IUpdateTaskStatusBody, si
                         return reject(errorObj)
 
 
+                    case (ex.code === AxiosError.ERR_NETWORK):
+                        const networkError = new NetworkError();
+                        return reject(networkError)
                 }
 
-                AxiosError.ERR_NETWORK
                 console.log(ex)
                 return reject("Please try again later")
             }
