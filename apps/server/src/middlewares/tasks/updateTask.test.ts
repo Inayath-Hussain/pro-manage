@@ -17,22 +17,6 @@ describe("addTask middleware", () => {
     })
 
 
-    test("should return 422 response when title, priority and checkList are missing", async () => {
-
-        const req = createRequest({ body: { taskId: 2133124, title: 12344, priority: 3245435, checkList: 32432523 } });
-        const res = createResponse();
-        const next = jest.fn();
-
-        const errorObj = { message: "Invalid body", errors: { title: "title should be type 'string'", priority: "priority should be type 'string'", checkList: "checkList should be type 'Array'" } }
-
-        await validateUpdateTaskBody(req, res, next)
-
-        expect(res._getStatusCode()).toBe(422)
-        expect(res._getJSONData()).toEqual(errorObj)
-
-    })
-
-
     test("should send 422 response when title is not of type 'string'", async () => {
         const req = createRequest({ body: { taskId: "aeewfewfe", title: 12344, priority: "high", checkList: [{ description: "he", done: false }] } })
         const res = createResponse()

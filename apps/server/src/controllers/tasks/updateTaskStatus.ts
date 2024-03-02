@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { userService } from "../../services/user";
 import { expireAccessTokenCookie } from "../../utilities/cookies/signAccessToken";
 import { expireRefreshTokenCookie } from "../../utilities/cookies/signRefreshToken";
-import { IUpdateTaskStatusBody } from "@pro-manage/common-interfaces";
+import { IUpdateTaskStatusBody, InvalidTaskId } from "@pro-manage/common-interfaces";
 import { taskService } from "../../services/task";
 import { Ierror } from "../../utilities/requestHandlers/errorHandler";
 
@@ -23,7 +23,10 @@ export const updateTaskStatusController: RequestHandler<{}, {}, IUpdateTaskStatu
 
     const taskDoc = await taskService.getTasksByID(userDoc._id, taskId);
 
-    if (taskDoc === null) return next({ statusCode: 404, message: "task doesn't exist" } as Ierror)
+    if (taskDoc === null) {
+        const invalidTaskIdObj = new InvalidTaskId()
+        return res.status(404).json(invalidTaskIdObj)
+    }
 
 
     await taskService.updateTaskStatus(taskDoc, status)

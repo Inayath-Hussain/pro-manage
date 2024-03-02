@@ -26,5 +26,17 @@ export class UpdateTaskMiddlewareError implements IUpdateTaskBodyError {
         this.errors[key] = message
     }
 
+}
 
+
+
+
+export class InvalidTaskId {
+    message: string;
+    invalidTaskId: boolean;
+
+    constructor() {
+        this.message = "Task doesn't exist"
+        this.invalidTaskId = true
+    }
 }

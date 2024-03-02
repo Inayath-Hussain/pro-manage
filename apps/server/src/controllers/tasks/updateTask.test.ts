@@ -4,6 +4,7 @@ import { Ierror } from "../../utilities/requestHandlers/errorHandler"
 import { updateTaskController } from "./updateTask"
 import { User } from "../../models/user"
 import { taskService } from "../../services/task"
+import { InvalidTaskId } from "@pro-manage/common-interfaces"
 
 const mockedGetUserByEmail = jest.spyOn(userService, "getUserByEmail")
 const mockedGetTaskById = jest.spyOn(taskService, "getTasksByID")
@@ -33,7 +34,7 @@ describe("updateTask controller", () => {
         const res = createResponse();
         const next = jest.fn();
 
-        const errorObj = { statusCode: 404, message: "task doesn't exist" } as Ierror
+        const errorObj = new InvalidTaskId();
 
         const userDoc = new User({ name: "test1", email: "test@domain.com", password: "oaefnovnonbr" })
 
@@ -42,8 +43,8 @@ describe("updateTask controller", () => {
 
         await updateTaskController(req, res, next)
 
-        expect(next).toHaveBeenCalledTimes(1)
-        expect(next).toHaveBeenCalledWith(errorObj)
+        expect(res._getStatusCode()).toBe(404)
+        expect(res._getJSONData()).toEqual(errorObj)
 
     })
 })

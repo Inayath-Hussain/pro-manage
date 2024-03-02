@@ -5,7 +5,7 @@ import { userService } from "../../services/user";
 import { taskService } from "../../services/task";
 import { User } from "../../models/user";
 import { Task } from "../../models/task";
-import { IUpdateDoneBody, InvalidCheckListItemId } from "@pro-manage/common-interfaces";
+import { IUpdateDoneBody, InvalidCheckListItemId, InvalidTaskId } from "@pro-manage/common-interfaces";
 
 
 const mockedGetUserByEmail = jest.spyOn(userService, "getUserByEmail");
@@ -35,7 +35,7 @@ describe("updateDone controller", () => {
         const res = createResponse();
         const next = jest.fn();
 
-        const errorObj: Ierror = { statusCode: 404, message: "task doesn't exist" }
+        const errorObj = new InvalidTaskId()
 
         const user = new User({
             email: "test@domain.com",
@@ -48,8 +48,8 @@ describe("updateDone controller", () => {
 
         await updateDoneController(req, res, next);
 
-        expect(next).toHaveBeenCalledTimes(1)
-        expect(next).toHaveBeenCalledWith(errorObj)
+        expect(res._getStatusCode()).toBe(404)
+        expect(res._getJSONData()).toEqual(errorObj)
     })
 
 
