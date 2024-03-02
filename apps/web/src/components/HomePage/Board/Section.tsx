@@ -6,14 +6,14 @@ import styles from "./Section.module.css"
 import { useState } from "react";
 
 
-interface Iprops {
+export interface ISectionprops {
     title: string
     tasks: ITask[]
 }
 
 
 
-const Section: React.FC<Iprops> = ({ title, tasks }) => {
+const Section: React.FC<ISectionprops> = ({ title, tasks }) => {
 
     // this state is passed to all cards and whenever this state changes card collapse function is run
     const [collapseAll, setCollapseAll] = useState(false);

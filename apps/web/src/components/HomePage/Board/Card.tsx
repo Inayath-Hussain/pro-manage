@@ -5,6 +5,7 @@ import { ITask } from "@web/store/slices/taskSlice";
 
 import styles from "./Card.module.css"
 import { useEffect, useState } from "react";
+import StatusButtons from "./StatusButtons";
 
 
 interface Iprops {
@@ -39,7 +40,9 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
         }, 0)
     }
 
-    const getFormattedDueDate = (date: string) => moment(date).format("MMM Do")
+    const getFormattedDueDate = (date: string) => moment(date).format("MMM Do");
+
+    const hasDueDatePassed = (date: string) => moment(date).isBefore(new Date(), "day")
 
     return (
         <div className={styles.card}>
@@ -105,27 +108,17 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
                 <div className={styles.dueDate_and_status}>
 
                     {/* check if dueDate has passed and set color to red  */}
-                    {task.dueDate ?
-                        <p className={styles.dueDate}>{getFormattedDueDate(task.dueDate)}</p>
-                        :
-                        <p></p>
-                    }
+                    <div>
+                        {task.dueDate &&
+                            <p className={`${styles.dueDate} ${hasDueDatePassed(task.dueDate) ? styles.dueDate_passed : ""}`}>
+                                {getFormattedDueDate(task.dueDate)}
+                            </p>
+                        }
+                    </div>
 
 
                     {/* status */}
-                    <div className={styles.status_container}>
-                        <button className={styles.status}>
-                            PROGRESS
-                        </button>
-
-                        <button className={styles.status}>
-                            TO DO
-                        </button>
-
-                        <button className={styles.status}>
-                            DONE
-                        </button>
-                    </div>
+                    <StatusButtons taskId={task._id} status={task.status} />
 
                 </div>
 

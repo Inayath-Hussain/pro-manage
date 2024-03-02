@@ -6,5 +6,6 @@ export const apiUrls = {
     userInfo: "/api/user/info",
 
     // tasks
-    getTask: "/api/task"
+    getTask: "/api/task",
+    updateTaskStatus: "/api/task"
 }

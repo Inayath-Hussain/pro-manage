@@ -6,7 +6,7 @@ import { userInfoSelector } from "@web/store/slices/userInfoSlice";
 
 import commonStyle from "./Index.module.css";
 import styles from "./Board.module.css"
-import Section from "@web/components/HomePage/Board/Section";
+import Section, { ISectionprops } from "@web/components/HomePage/Board/Section";
 import { ITask, taskSelector } from "@web/store/slices/taskSlice";
 import { useEffect, useState } from "react";
 
@@ -23,6 +23,13 @@ const BoardPage = () => {
 
     console.log(tasks)
     // "backlog", "in-progress", "to-do", "done"
+
+    const sections: Required<ISectionprops>[] = [
+        { title: "Backlog", tasks: backLogTasks },
+        { title: "To do", tasks: todoTasks },
+        { title: "In progress", tasks: inProgressTasks },
+        { title: "Done", tasks: doneTasks }
+    ]
 
     useEffect(() => {
         const backLogTasks = tasks.filter(t => t.status === "backlog")
@@ -66,13 +73,10 @@ const BoardPage = () => {
             <div className={styles.tasks_sections_container_scroll}>
 
                 <div className={styles.task_sections_container}>
-                    <Section title="Backlog" tasks={backLogTasks} />
 
-                    <Section title="To do" tasks={todoTasks} />
-
-                    <Section title="In progress" tasks={inProgressTasks} />
-
-                    <Section title="Done" tasks={doneTasks} />
+                    {sections.map(s => (
+                        <Section title={s.title} tasks={s.tasks} key={s.title} />
+                    ))}
 
                 </div>
             </div>
