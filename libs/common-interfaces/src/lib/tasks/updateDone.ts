@@ -28,3 +28,15 @@ export class UpdateDoneBodyError implements IUpdateDoneBodyError {
         this.errors[key] = message
     }
 }
+
+
+// used to create object when checkList item with provided id doesn't exist 
+export class InvalidCheckListItemId {
+    message: string;
+    invalidCheckListId: boolean;
+
+    constructor() {
+        this.message = "CheckList item doesn't exist"
+        this.invalidCheckListId = true
+    }
+}

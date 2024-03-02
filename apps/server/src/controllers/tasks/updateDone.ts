@@ -1,4 +1,4 @@
-import { IUpdateDoneBody } from "@pro-manage/common-interfaces";
+import { IUpdateDoneBody, InvalidCheckListItemId } from "@pro-manage/common-interfaces";
 
 import { RequestHandler } from "express";
 import { userService } from "../../services/user";
@@ -28,7 +28,10 @@ export const updateDoneController: RequestHandler<{}, {}, IUpdateDoneBody> = asy
 
 
     const index = taskDoc.checklist.findIndex(item => item._id?.toString() === checkListId)
-    if (index === -1) return next({ statusCode: 404, message: "checkList item doesn't exist" } as Ierror)
+    if (index === -1) {
+        const checkListErrorObj = new InvalidCheckListItemId()
+        return res.status(404).json(checkListErrorObj)
+    }
 
     await taskService.updateDone(req.body)
 
