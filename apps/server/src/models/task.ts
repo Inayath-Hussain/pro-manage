@@ -1,5 +1,5 @@
 import { InferSchemaType, Schema, model } from "mongoose";
-
+import { priorityEnum, statusEnum } from "@pro-manage/common-interfaces";
 
 // title - string
 // due date - optional
@@ -18,8 +18,8 @@ const taskSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: "user", required: true },
     title: { type: String, required: true },
     dueDate: { type: Date, required: false },
-    priority: { type: String, required: true, enum: ["high", "moderate", "low"] },
-    status: { type: String, required: true, enum: ["backlog", "in-progress", "to-do", "done"], default: "to-do" },
+    priority: { type: String, required: true, enum: priorityEnum },
+    status: { type: String, required: true, enum: statusEnum, default: "to-do" },
     checklist: [checkListSchema],
     createdAt: { type: Date, required: false, default: new Date() }
 })
@@ -28,11 +28,3 @@ const taskSchema = new Schema({
 export type ITask = InferSchemaType<typeof taskSchema>
 
 export const Task = model("task", taskSchema)
-
-// @ts-ignore
-// extract priority enumValues defined in schema. Had to use ts-ignore because enumValues is not defined in mongoose types 
-export const priorityEnum = Task.schema.path("priority").enumValues as ITask["priority"][]
-
-// @ts-ignore
-// extract priority enumValues defined in schema. Had to use ts-ignore because enumValues is not defined in mongoose types
-export const statusEnum = Task.schema.path("status").enumValues as ITask["status"][]

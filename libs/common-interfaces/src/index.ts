@@ -7,6 +7,8 @@ export * from "./lib/tasks/getTask";
 export * from "./lib/tasks/updateTask";
 export * from "./lib/tasks/updateTaskStatus";
 
+export * from "./lib/tasks/model"
+
 export interface ILoginBody {
     email: string
     password: string

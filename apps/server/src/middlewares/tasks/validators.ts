@@ -1,7 +1,7 @@
 import { IAddTaskBody } from "@pro-manage/common-interfaces";
 
 // import { isDate } from "validator"
-import { priorityEnum, statusEnum } from "../../models/task";
+import { priorityEnum, statusEnum } from "@pro-manage/common-interfaces";
 
 interface Valid {
     valid: true
