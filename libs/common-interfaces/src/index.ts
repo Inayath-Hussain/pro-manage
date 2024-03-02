@@ -6,6 +6,7 @@ export * from "./lib/tasks/addTask";
 export * from "./lib/tasks/getTask";
 export * from "./lib/tasks/updateTask";
 export * from "./lib/tasks/updateTaskStatus";
+export * from "./lib/tasks/updateDone"
 
 export * from "./lib/tasks/model"
 

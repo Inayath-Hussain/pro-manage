@@ -118,7 +118,13 @@ export const validateDueDate = (dueDate: any): Valid | InValid => {
 
 
 export const validateTaskID = (id: any): Valid | InValid => {
-    if (!id) return { valid: false, errorMessage: "taskId is required" }
+    switch (true) {
+        case (!id):
+            return { valid: false, errorMessage: "taskId is required" }
+
+        case (typeof id !== "string"):
+            return { valid: false, errorMessage: "taskId should be type 'string'" }
+    }
 
     return { valid: true }
 }

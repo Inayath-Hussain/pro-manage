@@ -1,4 +1,4 @@
-import { IAddTaskBody, IGetTaskQuery, IUpdateTaskBody } from "@pro-manage/common-interfaces";
+import { IAddTaskBody, IGetTaskQuery, IUpdateDoneBody, IUpdateTaskBody } from "@pro-manage/common-interfaces";
 
 import { ITask, Task } from "../models/task";
 import { Types, FilterQuery, Document } from "mongoose";
@@ -95,6 +95,12 @@ class TaskService {
         return await taskDoc.updateOne({
             status
         })
+    }
+
+
+    async updateDone(payload: IUpdateDoneBody) {
+        return await Task.updateOne({ _id: payload.taskId, 'checklist._id': payload.checkListId },
+            { $set: { 'checklist.$.done': payload.done } })
     }
 }
 
