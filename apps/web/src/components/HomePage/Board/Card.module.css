@@ -60,8 +60,13 @@
 
 .dueDate_passed {
     background: #CF3636;
+    color: #fff;
 }
 
+.dueDate_for_task_done {
+    background: #63C05B;
+    color: #fff;
+}
 
 .dueDate_and_status {
     margin-top: 1rem;

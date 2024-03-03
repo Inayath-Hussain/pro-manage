@@ -114,6 +114,10 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
     const hasDueDatePassed = (date: string) => moment(date).isBefore(new Date(), "day")
 
 
+    // returns module css class for dueDate 
+    const getDueDateClass = (dueDate: string) =>
+        task.status === "done" ? styles.dueDate_for_task_done :
+            hasDueDatePassed(dueDate) ? styles.dueDate_passed : ""
 
     return (
         <div className={styles.card}>
@@ -174,7 +178,7 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
                     {/* check if dueDate has passed and set color to red  */}
                     <div>
                         {task.dueDate &&
-                            <p className={`${styles.dueDate} ${hasDueDatePassed(task.dueDate) ? styles.dueDate_passed : ""}`}>
+                            <p className={`${styles.dueDate} ${getDueDateClass(task.dueDate)}`}>
                                 {getFormattedDueDate(task.dueDate)}
                             </p>
                         }
