@@ -1,15 +1,14 @@
-import { useContext } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
-import { modalContext } from "@web/context/modal";
 import ModalBase from "@web/components/modal/ModalBase";
+
 
 /**
  * hook to handle display status of new group form modal.
  */
 const useModal = () => {
 
-    // state variable to manage modal display status
-    const { showModalState, setShowModalState } = useContext(modalContext);
+    const [showModalState, setShowModalState] = useState(false);
 
 
     const showModal = () => {
@@ -19,6 +18,7 @@ const useModal = () => {
     const hideModal = () => {
         setShowModalState(false)
     }
+
 
     /**
      * this function should be called inside render lifecycle of component.
@@ -35,6 +35,7 @@ const useModal = () => {
     }
 
     return {
+        showModalState,
         showModal,
         hideModal,
         ModalPortal

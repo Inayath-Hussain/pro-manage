@@ -53,6 +53,7 @@ const taskSlice = createSlice({
 
         removeTask: (state, action: PayloadAction<{ _id: string }>) => {
             state = state.filter(s => s._id !== action.payload._id)
+            return state
         },
 
         removeCheckListItem: (state, action: PayloadAction<{ taskId: string, itemID: string }>) => {

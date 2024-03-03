@@ -1,8 +1,16 @@
+import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import Logo from "@web/assets/icons/pro-manage-logo.svg"
 import LogoutIcon from '@web/assets/icons/Logout.svg'
+import { useAbortController } from "@web/hooks/useAbortContoller";
+import useModal from "@web/hooks/useModal";
+import { useOnline } from "@web/hooks/useOnline";
 import { routes } from "@web/routes";
+import { NetworkError } from "@web/services/api/errors";
+import { logoutService } from "@web/services/api/user/logoutService";
+import { clearUserInfo } from "@web/store/slices/userInfoSlice";
+import ConfirmModalComponent from "../modal/contents/Confirm";
 
 import AnalyticsIcon from "../Icons/Analytics";
 import BoardIcon from "../Icons/Board";
@@ -10,27 +18,40 @@ import SettingsIcon from "../Icons/Settings";
 import { IIconProps } from "../Icons/interface";
 
 import styles from "./NavBar.module.css"
-import { useAbortController } from "@web/hooks/useAbortContoller";
-import { useOnline } from "@web/hooks/useOnline";
-import useModal from "@web/hooks/useModal";
-import LogoutModalComponent from "../modal/contents/Logout";
 
 
 const NavBar = () => {
 
     const { pathname } = useLocation();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
+    const { signalRef } = useAbortController();
     const { isOnline } = useOnline();
-    const { showModal, ModalPortal } = useModal();
+    const { showModal, hideModal, ModalPortal } = useModal();
 
     /**
      * to check if current url is same as the one provided in arguments
-     */
+    */
     const isActiveLink = (path: string) => {
         if (pathname === path) return true
         return false
     }
 
+    const handleLogout = async () => {
+        try {
+            await logoutService(signalRef.current.signal)
+
+            dispatch(clearUserInfo());
+            navigate(routes.user.login);
+            hideModal();
+        }
+        catch (ex) {
+            if (ex instanceof NetworkError) return  //Check your network and try again toast here
+
+            // Something went wrong toast here
+        }
+    }
 
 
     interface ILinks {
@@ -45,6 +66,8 @@ const NavBar = () => {
         { IconComponent: SettingsIcon, route: routes.settings, text: "Settings" }
     ]
 
+
+    // const { ModalPortal } = useModalComponent(<ConfirmModalComponent action="Logout" handleConfirm={handleLogout} />);
 
     return (
 
@@ -83,7 +106,7 @@ const NavBar = () => {
             </button>
 
             {/* this function appends logout modal to dom */}
-            {ModalPortal(<LogoutModalComponent />)}
+            {ModalPortal(<ConfirmModalComponent action="Logout" handleConfirm={handleLogout} />)}
 
         </section>
     );

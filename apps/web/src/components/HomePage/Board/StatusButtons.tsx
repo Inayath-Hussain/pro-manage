@@ -1,10 +1,10 @@
-import { statusEnum } from "@pro-manage/common-interfaces"
+import { InvalidTaskId, statusEnum } from "@pro-manage/common-interfaces"
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAbortController } from "@web/hooks/useAbortContoller"
-import { TaskDonotExist, updateTaskStatusService } from "@web/services/api/task/updateTaskStatus"
-import { NetworkError } from "@web/services/api/errors"
+import { updateTaskStatusService } from "@web/services/api/task/updateTaskStatus"
+import { NetworkError, UnauthorizedError } from "@web/services/api/errors"
 
 import styles from "./StatusButtons.module.css"
 import { routes } from "@web/routes"
@@ -50,11 +50,11 @@ const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
                     console.log("network error toast", ex.message)
                     break;
 
-                case (ex instanceof TaskDonotExist):
+                case (ex instanceof InvalidTaskId):
                     console.log("task donot exist toast", ex.message)
                     break;
 
-                case (ex === false):
+                case (ex instanceof UnauthorizedError):
                     navigate(routes.user.login)
                     return
 

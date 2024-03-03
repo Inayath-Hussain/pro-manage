@@ -22,6 +22,8 @@
 .checklist_collapse_button {
     border: 0;
     background: #EEECEC;
+
+    cursor: pointer;
 }
 
 .checkList_container {

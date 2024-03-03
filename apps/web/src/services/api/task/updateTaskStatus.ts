@@ -1,17 +1,10 @@
-import { IUpdateTaskStatusBody } from "@pro-manage/common-interfaces";
-import { apiUrls } from "../URLs";
+import { IUpdateTaskStatusBody, InvalidTaskId } from "@pro-manage/common-interfaces";
+
+import { AxiosError, GenericAbortSignal, HttpStatusCode } from "axios";
+import { NetworkError, UnauthorizedError } from "../errors";
 import { axiosInstance } from "../instance";
-import { AxiosError, GenericAbortSignal } from "axios";
-import { NetworkError } from "../errors";
+import { apiUrls } from "../URLs";
 
-
-export class TaskDonotExist {
-    message: string;
-
-    constructor(message: string) {
-        this.message = message
-    }
-}
 
 export const updateTaskStatusService = async (payload: IUpdateTaskStatusBody, signal: GenericAbortSignal) => {
     return new Promise(async (resolve, reject) => {
@@ -24,17 +17,18 @@ export const updateTaskStatusService = async (payload: IUpdateTaskStatusBody, si
             if (ex instanceof AxiosError) {
 
                 switch (true) {
-                    case (ex.response?.status === 401):
-                        return reject(false);
+                    case (ex.response?.status === HttpStatusCode.Unauthorized):
+                        const unauthorizedErrorObj = new UnauthorizedError();
+                        return reject(unauthorizedErrorObj);
 
-                    case (ex.response?.status === 404):
-                        const errorObj = new TaskDonotExist(ex.response.data.message)
-                        return reject(errorObj)
+                    case (ex.response?.status === HttpStatusCode.NotFound):
+                        const errorObj = new InvalidTaskId();
+                        return reject(errorObj);
 
 
                     case (ex.code === AxiosError.ERR_NETWORK):
                         const networkError = new NetworkError();
-                        return reject(networkError)
+                        return reject(networkError);
                 }
 
                 console.log(ex)
