@@ -4,6 +4,7 @@ import { expireAccessTokenCookie } from "../../utilities/cookies/signAccessToken
 import { expireRefreshTokenCookie } from "../../utilities/cookies/signRefreshToken";
 import { Ierror } from "../../utilities/requestHandlers/errorHandler";
 import { taskService } from "../../services/task";
+import { InvalidTaskId } from "@pro-manage/common-interfaces";
 
 export const deleteTaskController: RequestHandler = async (req, res, next) => {
     const email = req.email as string;
@@ -20,7 +21,10 @@ export const deleteTaskController: RequestHandler = async (req, res, next) => {
 
     const task = await taskService.getTasksByID(userDoc._id, id)
 
-    if (task === null) return next({ statusCode: 404, message: "task doesn't exist" } as Ierror)
+    if (task === null) {
+        const invalidTaskIdObj = new InvalidTaskId();
+        return res.status(404).json(invalidTaskIdObj)
+    }
 
     await task.deleteOne()
 
