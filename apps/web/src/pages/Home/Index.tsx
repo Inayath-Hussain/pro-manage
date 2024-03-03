@@ -12,6 +12,7 @@ import { routes } from "@web/routes";
 import { getTaskService } from "@web/services/api/task/getTask";
 
 import styles from "./Index.module.css";
+import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 
 
 const HomePage = () => {
@@ -26,10 +27,16 @@ const HomePage = () => {
     // for userInfo
     useEffect(() => {
         const call = async () => {
-            if (userInfo.status === "idle") {
+            if (userInfo.status === "idle" || userInfo.status === "error") {
                 // get user info
                 dispatch(getUserInfo(signalRef.current.signal)).unwrap().catch((reason) => {
-                    if (reason === 401) navigate(routes.user.login)
+                    switch (true) {
+                        case (reason instanceof UnauthorizedError):
+                            return navigate(routes.user.login);
+
+                        case (reason instanceof NetworkError):
+                            return console.log("Check your network and try again") // Check your network and try again toast here
+                    }
                 })
             }
         }

@@ -3,6 +3,7 @@ import { UserInfo } from "@pro-manage/common-interfaces"
 import { AxiosError, GenericAbortSignal, HttpStatusCode } from "axios"
 import { apiUrls } from "../URLs"
 import { axiosInstance } from "../instance"
+import { NetworkError, UnauthorizedError } from "../errors"
 
 export const getUserInfoService = async (signal: GenericAbortSignal) => {
     return new Promise<UserInfo>(async (resolve, reject) => {
@@ -13,8 +14,16 @@ export const getUserInfoService = async (signal: GenericAbortSignal) => {
         }
         catch (ex) {
             if (ex instanceof AxiosError) {
-                const status = ex.response?.status
-                if (status === HttpStatusCode.Unauthorized) return reject(false)
+                switch (true) {
+                    case (ex.response?.status === HttpStatusCode.Unauthorized):
+                        const unauthorizedErrorObj = new UnauthorizedError();
+                        return reject(unauthorizedErrorObj);
+
+
+                    case (ex.code === AxiosError.ERR_NETWORK):
+                        const networkErrorObj = new NetworkError();
+                        return reject(networkErrorObj);
+                }
             }
 
             console.log(ex)

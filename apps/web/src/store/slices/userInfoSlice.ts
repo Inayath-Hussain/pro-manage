@@ -4,6 +4,7 @@ import { GenericAbortSignal } from "axios"
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import { getUserInfoService } from "@web/services/api/user/getUserInfoService"
 import { RootState } from "../index"
+import { NetworkError, UnauthorizedError } from "@web/services/api/errors"
 
 
 interface Ivalues extends UserInfo {
@@ -22,9 +23,18 @@ export const getUserInfo = createAsyncThunk("getUserInfo", async (signal: Generi
         return thunkAPI.fulfillWithValue(data)
     }
     catch (ex) {
-        if (ex === false) return thunkAPI.rejectWithValue(401)
+        switch (true) {
+            case (ex instanceof UnauthorizedError):
+                return thunkAPI.rejectWithValue(ex)
 
-        return thunkAPI.rejectWithValue(500)
+
+            case (ex instanceof NetworkError):
+                return thunkAPI.rejectWithValue(ex)
+
+
+            default:
+                return thunkAPI.rejectWithValue(500)
+        }
     }
 
 })
@@ -34,7 +44,7 @@ const userInfoSlice = createSlice({
     initialState: initialState,
     name: "userInfo",
     reducers: {
-        clear: () => {
+        clearUserInfo: () => {
             return initialState
         },
 
@@ -63,7 +73,7 @@ const userInfoSlice = createSlice({
 
 
 
-export const { clear, updateName } = userInfoSlice.actions
+export const { clearUserInfo, updateName } = userInfoSlice.actions
 
 export const userInfoSelector = (state: RootState) => state.userInfo
 

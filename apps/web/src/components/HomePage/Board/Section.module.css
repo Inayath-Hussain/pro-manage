@@ -1,5 +1,16 @@
 @import url("@web/styles.css");
 
+.add_task_button {
+    border: 0;
+}
+
+.buttons_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 1rem;
+}
+
 .cards_container {
     overflow-y: scroll;
 

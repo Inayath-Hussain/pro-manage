@@ -11,18 +11,17 @@ import { IIconProps } from "../Icons/interface";
 
 import styles from "./NavBar.module.css"
 import { useAbortController } from "@web/hooks/useAbortContoller";
-import { logoutService } from "@web/services/api/user/logoutService";
 import { useOnline } from "@web/hooks/useOnline";
+import useModal from "@web/hooks/useModal";
+import LogoutModalComponent from "../modal/contents/Logout";
 
 
 const NavBar = () => {
 
     const { pathname } = useLocation();
-    const navigate = useNavigate();
 
-    const { signalRef } = useAbortController();
     const { isOnline } = useOnline();
-
+    const { showModal, ModalPortal } = useModal();
 
     /**
      * to check if current url is same as the one provided in arguments
@@ -30,18 +29,6 @@ const NavBar = () => {
     const isActiveLink = (path: string) => {
         if (pathname === path) return true
         return false
-    }
-
-
-    const handleLogout = async () => {
-        try {
-            await logoutService(signalRef.current.signal)
-
-            navigate(routes.user.login)
-        }
-        catch (ex) {
-            // toast message here to try again later
-        }
     }
 
 
@@ -87,11 +74,16 @@ const NavBar = () => {
 
 
 
-            <button onClick={handleLogout} className={`${styles.logout_button} ${styles.flex}`}
+            <button onClick={showModal} className={`${styles.logout_button} ${styles.flex}`}
                 disabled={!isOnline} >
+
                 <img src={LogoutIcon} alt="" className={styles.logo} />
                 <p>Log out</p>
+
             </button>
+
+            {/* this function appends logout modal to dom */}
+            {ModalPortal(<LogoutModalComponent />)}
 
         </section>
     );

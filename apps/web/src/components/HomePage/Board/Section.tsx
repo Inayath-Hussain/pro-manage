@@ -1,10 +1,11 @@
-import CollapseAll from "@web/assets/icons/collapse-all.svg"
+import { useState } from "react";
+
+import CollapseAll from "@web/assets/icons/collapse-all.svg";
+import AddIcon from "@web/assets/icons/add_logo.svg";
 import { ITask } from "@web/store/slices/taskSlice";
 import Card from "./Card";
 
-import styles from "./Section.module.css"
-import { useState } from "react";
-
+import styles from "./Section.module.css";
 
 export interface ISectionprops {
     title: string
@@ -22,16 +23,35 @@ const Section: React.FC<ISectionprops> = ({ title, tasks }) => {
         setCollapseAll(!collapseAll)
     }
 
+
+    const handleAddNewTask = () => {
+
+    }
+
     return (
         <section className={styles.section}>
 
             <div className={styles.section_header}>
                 <p>{title}</p>
 
-                <button className={styles.collapse_all_buttton} aria-label="collapse all" title="collapse all"
-                    onClick={handleCollapseAll}>
-                    <img src={CollapseAll} alt="" />
-                </button>
+                <div className={styles.buttons_container}>
+
+                    {/* Add Task */}
+                    {title === "To do" &&
+                        <button className={styles.add_task_button} aria-label="Add Task" title="Add Task"
+                            onClick={handleAddNewTask}>
+                            <img src={AddIcon} alt="" />
+                        </button>}
+
+
+                    {/* Collapse All */}
+                    <button className={styles.collapse_all_buttton} aria-label="collapse all" title="collapse all"
+                        onClick={handleCollapseAll}>
+                        <img src={CollapseAll} alt="" />
+                    </button>
+
+                </div>
+
             </div>
 
 
