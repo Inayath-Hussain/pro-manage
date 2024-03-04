@@ -1,13 +1,11 @@
 import { ITaskJSON } from "@pro-manage/common-interfaces";
-import { useState } from "react";
 
+import { useState } from "react";
 import CollapseAll from "@web/assets/icons/collapse-all.svg";
+import AddTask from "./AddTask";
 import Card from "./Card";
 
 import styles from "./Section.module.css";
-// import useModal from "@web/hooks/useModal";
-// import TaskFormModal from "@web/components/modal/contents/TaskForm";
-import AddTask from "./AddTask";
 
 export interface ISectionprops {
     title: string
@@ -25,10 +23,6 @@ const Section: React.FC<ISectionprops> = ({ title, tasks }) => {
         setCollapseAll(!collapseAll)
     }
 
-
-    const handleAddNewTask = () => {
-
-    }
 
     return (
         <section className={styles.section}>
@@ -61,8 +55,6 @@ const Section: React.FC<ISectionprops> = ({ title, tasks }) => {
 
             </div>
 
-            {/* appends modal to dom */}
-            {/* {ModalPortal(<TaskFormModal />)} */}
         </section>
     );
 }

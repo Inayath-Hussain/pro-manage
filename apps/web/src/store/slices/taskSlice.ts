@@ -24,6 +24,7 @@ const taskSlice = createSlice({
 
         addTaskAction: (state, action: PayloadAction<ITaskJSON>) => {
             state = [...state, action.payload]
+            return state
         },
 
         updateTaskStatusAction: (state, action: PayloadAction<IUpdateTaskStatusPayload>) => {
