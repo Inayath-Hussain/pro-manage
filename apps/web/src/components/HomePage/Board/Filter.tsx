@@ -9,7 +9,7 @@ import { routes } from "@web/routes";
 import { getTaskService } from "@web/services/api/task/getTask";
 
 import styles from "./Filter.module.css"
-import { renewTask } from "@web/store/slices/taskSlice";
+import { renewTaskAction } from "@web/store/slices/taskSlice";
 import { NetworkError } from "@web/services/api/errors";
 
 
@@ -61,7 +61,7 @@ const Filter: React.FC = () => {
         try {
             const result = await getTaskService(value, signalRef.current.signal)
 
-            dispatch(renewTask(result))
+            dispatch(renewTaskAction(result))
 
             // and then change selectedFilter
             setSelectedFilter(value)

@@ -6,7 +6,7 @@ import NavBar from "@web/components/HomePage/NavBar";
 import { useAbortController } from "@web/hooks/useAbortContoller";
 import { AppDispatch } from "@web/store";
 import { getUserInfo, userInfoSelector } from "@web/store/slices/userInfoSlice";
-import { renewTask } from "@web/store/slices/taskSlice"
+import { renewTaskAction } from "@web/store/slices/taskSlice"
 
 import { routes } from "@web/routes";
 import { getTaskService } from "@web/services/api/task/getTask";
@@ -51,7 +51,7 @@ const HomePage = () => {
             try {
                 const result = await getTaskService("week", signalRef.current.signal)
 
-                dispatch(renewTask(result))
+                dispatch(renewTaskAction(result))
             }
             catch (ex) {
                 console.log(ex)

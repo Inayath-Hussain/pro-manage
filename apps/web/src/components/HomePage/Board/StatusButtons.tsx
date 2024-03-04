@@ -9,7 +9,7 @@ import { NetworkError, UnauthorizedError } from "@web/services/api/errors"
 import styles from "./StatusButtons.module.css"
 import { routes } from "@web/routes"
 import { useDispatch } from "react-redux"
-import { updateTaskStatus } from "@web/store/slices/taskSlice"
+import { updateTaskStatusAction } from "@web/store/slices/taskSlice"
 
 interface Iprops {
     taskId: string
@@ -39,7 +39,7 @@ const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
             if (result) {
                 setLoading(false)
 
-                dispatch(updateTaskStatus({ _id: taskId, status }))
+                dispatch(updateTaskStatusAction({ _id: taskId, status }))
                 // on success dispatch action to update task
             }
         }

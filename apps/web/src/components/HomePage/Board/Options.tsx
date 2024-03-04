@@ -11,7 +11,7 @@ import { useOnline } from "@web/hooks/useOnline";
 import { routes } from "@web/routes";
 import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 import { deleteTaskService } from "@web/services/api/task/deleteTask";
-import { removeTask } from "@web/store/slices/taskSlice";
+import { removeTaskAction } from "@web/store/slices/taskSlice";
 
 import styles from "./Options.module.css"
 
@@ -75,7 +75,7 @@ const Options: React.FC<Iprops> = ({ taskId }) => {
             await deleteTaskService(taskId, signalRef.current.signal)
 
             hideModal();
-            dispatch(removeTask({ _id: taskId }))
+            dispatch(removeTaskAction({ _id: taskId }))
         }
         catch (ex) {
             switch (true) {
@@ -87,7 +87,7 @@ const Options: React.FC<Iprops> = ({ taskId }) => {
 
                 case (ex instanceof InvalidTaskId):
                     hideModal();
-                    dispatch(removeTask({ _id: taskId }))
+                    dispatch(removeTaskAction({ _id: taskId }))
                     break;
 
                 case (ex instanceof NetworkError):

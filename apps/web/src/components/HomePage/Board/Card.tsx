@@ -1,18 +1,19 @@
+import { InvalidCheckListItemId, InvalidTaskId } from "@pro-manage/common-interfaces";
+
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import CheckListArror from "@web/assets/icons/checkList-arrow.svg"
+import { useAbortController } from "@web/hooks/useAbortContoller";
+import { routes } from "@web/routes";
+import { NetworkError } from "@web/services/api/errors";
+import { updateDoneService } from "@web/services/api/task/updateDone";
+import { ITask, removeCheckListItemAction, removeTaskAction, updateDoneAction } from "@web/store/slices/taskSlice";
 import Options from "./Options";
-import { ITask, removeCheckListItem, removeTask, updateDone } from "@web/store/slices/taskSlice";
+import StatusButtons from "./StatusButtons";
 
 import styles from "./Card.module.css"
-import { useEffect, useState } from "react";
-import StatusButtons from "./StatusButtons";
-import { updateDoneService } from "@web/services/api/task/updateDone";
-import { useAbortController } from "@web/hooks/useAbortContoller";
-import { useNavigate } from "react-router-dom";
-import { routes } from "@web/routes";
-import { InvalidCheckListItemId, InvalidTaskId } from "@pro-manage/common-interfaces";
-import { NetworkError } from "@web/services/api/errors";
-import { useDispatch } from "react-redux";
 
 
 interface Iprops {
@@ -60,7 +61,7 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
             if (result) {
                 setLoading(false)
                 // dispatch action to update checkList item
-                dispatch(updateDone({ taskId: task._id, checkListId, done: !item.done }))
+                dispatch(updateDoneAction({ taskId: task._id, checkListId, done: !item.done }))
 
             }
         }
@@ -71,13 +72,12 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
                     return navigate(routes.user.login)
 
                 case (ex instanceof InvalidTaskId):
-                    // dispatch to remove whole task
-                    dispatch(removeTask({ _id: task._id }))
+                    dispatch(removeTaskAction({ _id: task._id }))
                     return
 
                 case (ex instanceof InvalidCheckListItemId):
                     // dispatch to remove item from checkList
-                    dispatch(removeCheckListItem({ taskId: task._id, itemID: checkListId }))
+                    dispatch(removeCheckListItemAction({ taskId: task._id, itemID: checkListId }))
                     return
 
                 case (ex instanceof NetworkError):

@@ -9,5 +9,6 @@ export const apiUrls = {
     getTask: "/api/task",
     updateTaskStatus: "/api/task",
     updateDone: "/api/task/checkList",
-    deleteTask: (id: string) => "/api/task/" + id
+    deleteTask: (id: string) => "/api/task/" + id,
+    addTask: "/api/task"
 }

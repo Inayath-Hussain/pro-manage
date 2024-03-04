@@ -32,31 +32,35 @@ const taskSlice = createSlice({
     initialState,
     name: "tasks",
     reducers: {
-        renewTask: (state, action) => {
+        renewTaskAction: (state, action) => {
             state = [...action.payload]
 
             return state
         },
 
-        updateTaskStatus: (state, action: PayloadAction<IUpdateTaskStatusPayload>) => {
+        addTaskAction: (state, action: PayloadAction<ITask>) => {
+            state = [...state, action.payload]
+        },
+
+        updateTaskStatusAction: (state, action: PayloadAction<IUpdateTaskStatusPayload>) => {
             const index = state.findIndex(s => s._id === action.payload._id)
 
             state[index].status = action.payload.status
         },
 
-        updateDone: (state, action: PayloadAction<IUpdateDoneBody>) => {
+        updateDoneAction: (state, action: PayloadAction<IUpdateDoneBody>) => {
             const taskIndex = state.findIndex(s => s._id === action.payload.taskId)
             const itemIndex = state[taskIndex].checklist.findIndex(c => c._id === action.payload.checkListId)
 
             state[taskIndex].checklist[itemIndex].done = action.payload.done
         },
 
-        removeTask: (state, action: PayloadAction<{ _id: string }>) => {
+        removeTaskAction: (state, action: PayloadAction<{ _id: string }>) => {
             state = state.filter(s => s._id !== action.payload._id)
             return state
         },
 
-        removeCheckListItem: (state, action: PayloadAction<{ taskId: string, itemID: string }>) => {
+        removeCheckListItemAction: (state, action: PayloadAction<{ taskId: string, itemID: string }>) => {
             const index = state.findIndex(s => s._id === action.payload.taskId)
 
             state[index].checklist = state[index].checklist.filter(c => c._id !== action.payload.itemID)
@@ -65,7 +69,7 @@ const taskSlice = createSlice({
 })
 
 
-export const { renewTask, updateTaskStatus, updateDone, removeTask, removeCheckListItem } = taskSlice.actions
+export const { renewTaskAction, addTaskAction, updateTaskStatusAction, updateDoneAction, removeTaskAction, removeCheckListItemAction } = taskSlice.actions
 
 export const taskSelector = (state: RootState) => state.tasks
 

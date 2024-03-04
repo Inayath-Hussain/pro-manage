@@ -22,9 +22,9 @@ export class AddTaskMiddlewareError implements IAddTaskBodyError {
     errors: IAddTaskBodyError["errors"];
     message: string;
 
-    constructor(message: string) {
+    constructor(message: string, errors: IAddTaskBodyError["errors"] = {}) {
         this.message = message
-        this.errors = {}
+        this.errors = errors
     }
 
     addFieldError(key: keyof IAddTaskBodyError["errors"], message: string) {

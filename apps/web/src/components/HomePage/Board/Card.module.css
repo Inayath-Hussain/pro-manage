@@ -159,7 +159,7 @@
 }
 
 .priority_dot_red {
-    background: #FF2473;
+    background: var(--priority-high-color);
 }
 
 

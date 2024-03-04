@@ -9,6 +9,10 @@
     --primary-color: #17A2B8;
     --red-color: #CF3636;
 
+    --priority-high-color: #FF2473;
+    --priority-moderate-color: #18B0FF;
+    --priority-low-color: #63C05B;
+
     font-family: var(--poppins);
 
 }

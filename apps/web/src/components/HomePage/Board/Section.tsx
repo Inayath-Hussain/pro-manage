@@ -1,11 +1,13 @@
 import { useState } from "react";
 
 import CollapseAll from "@web/assets/icons/collapse-all.svg";
-import AddIcon from "@web/assets/icons/add_logo.svg";
 import { ITask } from "@web/store/slices/taskSlice";
 import Card from "./Card";
 
 import styles from "./Section.module.css";
+// import useModal from "@web/hooks/useModal";
+// import TaskFormModal from "@web/components/modal/contents/TaskForm";
+import AddTask from "./AddTask";
 
 export interface ISectionprops {
     title: string
@@ -37,11 +39,7 @@ const Section: React.FC<ISectionprops> = ({ title, tasks }) => {
                 <div className={styles.buttons_container}>
 
                     {/* Add Task */}
-                    {title === "To do" &&
-                        <button className={styles.add_task_button} aria-label="Add Task" title="Add Task"
-                            onClick={handleAddNewTask}>
-                            <img src={AddIcon} alt="" />
-                        </button>}
+                    {title === "To do" && <AddTask />}
 
 
                     {/* Collapse All */}
@@ -61,10 +59,10 @@ const Section: React.FC<ISectionprops> = ({ title, tasks }) => {
                     <Card task={t} key={t.title} collapseAll={collapseAll} />
                 ))}
 
-                {/* <Card />
-                <Card /> */}
             </div>
 
+            {/* appends modal to dom */}
+            {/* {ModalPortal(<TaskFormModal />)} */}
         </section>
     );
 }
