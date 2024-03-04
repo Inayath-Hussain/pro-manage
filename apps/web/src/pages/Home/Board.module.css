@@ -14,7 +14,7 @@
 
 .board_page_header {
     font-weight: 500;
-    font-size: 1.7rem;
+    font-size: 1.35rem;
 }
 
 
@@ -71,7 +71,7 @@
     font-weight: 500;
 
     text-align: right;
-    font-size: 1.2rem;
+    font-size: 1.05rem;
 
     margin-right: 2rem;
     margin-bottom: 0.5rem;
@@ -80,13 +80,31 @@
 
 .welcome_text {
     margin-bottom: 0;
+
+    font-size: 1.2rem;
 }
 
 
 
 @media screen and (min-width: 1024px) {
+
+    .board_page_header {
+        font-size: 1.7rem;
+    }
+
     .tasks_sections_container_scroll {
         /* total - navbar - page_padding */
         width: calc(100vw - 230px - 2rem);
     }
+
+
+    .today_date {
+        font-size: 1.2rem;
+    }
+
+
+    .welcome_text {
+        font-size: 1.5rem;
+    }
+
 }
