@@ -22,7 +22,7 @@ export const addTaskController: RequestHandler<{}, {}, IAddTaskBody> = async (re
         return next({ statusCode: 401, message: "email doesn't exist" } as Ierror)
     }
 
-    await taskService.addTask({ user: userDoc._id, title, priority, checkList, dueDate })
+    const taskDoc = await taskService.addTask({ user: userDoc._id, title, priority, checkList, dueDate })
 
-    return res.status(201).json({ message: "success" })
+    return res.status(201).json({ message: "success", taskId: taskDoc._id })
 }
