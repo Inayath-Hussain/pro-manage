@@ -1,4 +1,4 @@
-import { AddTaskMiddlewareError, priorityEnum } from "@pro-manage/common-interfaces";
+import { AddTaskMiddlewareError, priorityEnum, ITaskJSON } from "@pro-manage/common-interfaces";
 
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,7 @@ import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
 import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 import { addTaskService } from "@web/services/api/task/addTask";
-import { ITask, addTaskAction } from "@web/store/slices/taskSlice";
+import { addTaskAction } from "@web/store/slices/taskSlice";
 import { HandleChecklistItemChange, IChecklist } from "./TaskForm.interface";
 
 import styles from "./TaskForm.module.css"
@@ -22,7 +22,7 @@ type IPriority = typeof priorityEnum[number]
 
 
 interface Iprops {
-    task?: ITask
+    task?: ITaskJSON
     closeModal: () => void
 }
 

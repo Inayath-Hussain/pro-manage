@@ -1,4 +1,4 @@
-import { IAddTaskBody } from "@pro-manage/common-interfaces";
+import { AddTaskResponse, IAddTaskBody } from "@pro-manage/common-interfaces";
 
 import { RequestHandler } from "express";
 import { userService } from "../../services/user";
@@ -24,5 +24,11 @@ export const addTaskController: RequestHandler<{}, {}, IAddTaskBody> = async (re
 
     const taskDoc = await taskService.addTask({ user: userDoc._id, title, priority, checkList, dueDate })
 
-    return res.status(201).json({ message: "success", taskId: taskDoc._id })
+    const responseObj = new AddTaskResponse("success", {
+        _id: taskDoc._id.toString(),
+        title: taskDoc.title, checklist: taskDoc.checklist.toObject(), createdAt: taskDoc.createdAt?.toDateString() as string,
+        priority: taskDoc.priority, status: taskDoc.status, dueDate: taskDoc.dueDate?.toDateString()
+    })
+
+    return res.status(201).json(responseObj)
 }

@@ -1,4 +1,4 @@
-import { InvalidCheckListItemId, InvalidTaskId } from "@pro-manage/common-interfaces";
+import { InvalidCheckListItemId, InvalidTaskId, ITaskJSON } from "@pro-manage/common-interfaces";
 
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -9,7 +9,7 @@ import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
 import { NetworkError } from "@web/services/api/errors";
 import { updateDoneService } from "@web/services/api/task/updateDone";
-import { ITask, removeCheckListItemAction, removeTaskAction, updateDoneAction } from "@web/store/slices/taskSlice";
+import { removeCheckListItemAction, removeTaskAction, updateDoneAction } from "@web/store/slices/taskSlice";
 import Options from "./Options";
 import StatusButtons from "./StatusButtons";
 
@@ -17,7 +17,7 @@ import styles from "./Card.module.css"
 
 
 interface Iprops {
-    task: ITask
+    task: ITaskJSON
     collapseAll: boolean
 }
 

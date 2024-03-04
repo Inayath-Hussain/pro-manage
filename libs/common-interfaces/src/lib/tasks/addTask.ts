@@ -1,3 +1,5 @@
+import { ITaskJSON } from "./model"
+
 interface ICheckList {
     description: string
     done: boolean
@@ -30,6 +32,16 @@ export class AddTaskMiddlewareError implements IAddTaskBodyError {
     addFieldError(key: keyof IAddTaskBodyError["errors"], message: string) {
         this.errors[key] = message
     }
+}
 
 
+
+export class AddTaskResponse {
+    message: string;
+    task: ITaskJSON
+
+    constructor(message: string, task: ITaskJSON) {
+        this.message = message || "success"
+        this.task = task
+    }
 }

@@ -1,7 +1,7 @@
+import { ITaskJSON } from "@pro-manage/common-interfaces";
 import { useState } from "react";
 
 import CollapseAll from "@web/assets/icons/collapse-all.svg";
-import { ITask } from "@web/store/slices/taskSlice";
 import Card from "./Card";
 
 import styles from "./Section.module.css";
@@ -11,7 +11,7 @@ import AddTask from "./AddTask";
 
 export interface ISectionprops {
     title: string
-    tasks: ITask[]
+    tasks: ITaskJSON[]
 }
 
 

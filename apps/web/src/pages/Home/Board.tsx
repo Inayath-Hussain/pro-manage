@@ -1,3 +1,5 @@
+import { ITaskJSON } from "@pro-manage/common-interfaces";
+
 import { useSelector } from "react-redux";
 import moment from "moment"
 
@@ -7,15 +9,15 @@ import { userInfoSelector } from "@web/store/slices/userInfoSlice";
 import commonStyle from "./Index.module.css";
 import styles from "./Board.module.css"
 import Section, { ISectionprops } from "@web/components/HomePage/Board/Section";
-import { ITask, taskSelector } from "@web/store/slices/taskSlice";
+import { taskSelector } from "@web/store/slices/taskSlice";
 import { useEffect, useState } from "react";
 
 const BoardPage = () => {
 
-    const [backLogTasks, setBacklogTasks] = useState<ITask[]>([]);
-    const [todoTasks, setToDoTasks] = useState<ITask[]>([]);
-    const [inProgressTasks, setInProgressTasks] = useState<ITask[]>([]);
-    const [doneTasks, setDoneTasks] = useState<ITask[]>([]);
+    const [backLogTasks, setBacklogTasks] = useState<ITaskJSON[]>([]);
+    const [todoTasks, setToDoTasks] = useState<ITaskJSON[]>([]);
+    const [inProgressTasks, setInProgressTasks] = useState<ITaskJSON[]>([]);
+    const [doneTasks, setDoneTasks] = useState<ITaskJSON[]>([]);
 
 
     const { name } = useSelector(userInfoSelector)

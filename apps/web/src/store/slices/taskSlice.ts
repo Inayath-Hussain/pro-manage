@@ -1,31 +1,15 @@
-import { IUpdateDoneBody, priorityEnum, statusEnum } from "@pro-manage/common-interfaces";
+import { IUpdateDoneBody, ITaskJSON } from "@pro-manage/common-interfaces";
 
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../index";
 
-interface IChecklist {
-    description: string
-    done: boolean
-    _id: string
-}
-
-export interface ITask {
-    _id: string
-    title: string
-    priority: typeof priorityEnum[number]
-    status: typeof statusEnum[number]
-    checklist: IChecklist[]
-    createdAt: string,
-    dueDate?: string
-}
-
 interface IUpdateTaskStatusPayload {
-    status: ITask["status"]
+    status: ITaskJSON["status"]
     _id: string
 }
 
 
-const initialState: ITask[] = []
+const initialState: ITaskJSON[] = []
 
 
 const taskSlice = createSlice({
@@ -38,7 +22,7 @@ const taskSlice = createSlice({
             return state
         },
 
-        addTaskAction: (state, action: PayloadAction<ITask>) => {
+        addTaskAction: (state, action: PayloadAction<ITaskJSON>) => {
             state = [...state, action.payload]
         },
 
