@@ -82,12 +82,21 @@ class TaskService {
     async updateTask(taskDoc: ItaskDoc, payload: IUpdateTaskBody) {
         const { title, priority, checkList, dueDate } = payload
 
-        return await taskDoc.updateOne({
-            title: title,
-            priority: priority,
-            checklist: checkList,
-            dueDate
-        })
+        taskDoc.title = title
+        taskDoc.priority = priority as ITask["priority"]
+        taskDoc.checklist = checkList as ITask["checklist"]
+        taskDoc.dueDate = dueDate as ITask["dueDate"]
+
+        taskDoc.isNew = false
+
+        return await taskDoc.save()
+
+        // return await taskDoc.updateOne({
+        //     title: title,
+        //     priority: priority,
+        //     checklist: checkList,
+        //     dueDate
+        // })
     }
 
 

@@ -3,7 +3,7 @@ import { userService } from "../../services/user";
 import { expireAccessTokenCookie } from "../../utilities/cookies/signAccessToken";
 import { expireRefreshTokenCookie } from "../../utilities/cookies/signRefreshToken";
 import { Ierror } from "../../utilities/requestHandlers/errorHandler";
-import { IUpdateTaskBody, InvalidTaskId } from "@pro-manage/common-interfaces";
+import { IUpdateTaskBody, InvalidTaskId, UpdateTaskResponse } from "@pro-manage/common-interfaces";
 import { taskService } from "../../services/task";
 
 
@@ -28,7 +28,13 @@ export const updateTaskController: RequestHandler<{}, {}, IUpdateTaskBody> = asy
         return res.status(404).json(invalidTaskIdObj)
     }
 
-    await taskService.updateTask(taskDoc, body)
+    const result = await taskService.updateTask(taskDoc, body)
 
-    return res.status(200).json({ message: "success" });
+    const responseObj = new UpdateTaskResponse("success", {
+        _id: result._id.toString(),
+        title: result.title, checklist: result.checklist.toObject(), createdAt: result.createdAt?.toDateString() as string,
+        priority: result.priority, status: result.status, dueDate: result.dueDate?.toDateString()
+    })
+
+    return res.status(200).json(responseObj);
 }
