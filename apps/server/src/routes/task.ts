@@ -17,6 +17,8 @@ import { validateUpdateTaskStatusBody } from "../middlewares/tasks/updateTaskSta
 import { updateTaskStatusController } from "../controllers/tasks/updateTaskStatus";
 import { validateUpdateDoneBody } from "../middlewares/tasks/updateDone";
 import { updateDoneController } from "../controllers/tasks/updateDone";
+import { validatePublicTaskId } from "../middlewares/tasks/public";
+import { publicTaskController } from "../controllers/tasks/public";
 
 const router = Router();
 
@@ -42,5 +44,11 @@ router.delete("/:id", tryCatchWrapper(deleteTaskController))     // controller
 
 router.patch("/checkList", tryCatchWrapper(authMiddleware), validateUpdateDoneBody)     // middlewares
 router.patch("/checkList", tryCatchWrapper(updateDoneController))   //controller
+
+
+router.get("/public/:id", validatePublicTaskId)     // middleware
+router.get("/public/:id", tryCatchWrapper(publicTaskController))        // controller
+
+
 
 export { router as taskRouter }

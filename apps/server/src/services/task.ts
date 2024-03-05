@@ -79,6 +79,15 @@ class TaskService {
     }
 
 
+    /**
+     * used to get task for unauthenticated users
+     * @param taskId 
+     */
+    async getPublicTask(taskId: string) {
+        return await Task.findOne({ _id: taskId }, { user: 0, __v: 0, createdAt: 0 })
+    }
+
+
     async updateTask(taskDoc: ItaskDoc, payload: IUpdateTaskBody) {
         const { title, priority, checkList, dueDate } = payload
 

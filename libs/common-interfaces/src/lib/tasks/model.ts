@@ -20,3 +20,18 @@ export interface ITaskJSON {
     createdAt: string,
     dueDate?: string
 }
+
+
+
+
+/**
+ * converts task document to a taskJSON object
+ * @param taskDoc ITask - task document
+ */
+export const convertTaskDocToTaskJson = (taskDoc: any): ITaskJSON => (
+    {
+        _id: taskDoc._id.toString(),
+        title: taskDoc.title, checklist: taskDoc.checklist.toObject(), createdAt: taskDoc.createdAt?.toDateString() as string,
+        priority: taskDoc.priority, status: taskDoc.status, dueDate: taskDoc.dueDate?.toDateString()
+    }
+)
