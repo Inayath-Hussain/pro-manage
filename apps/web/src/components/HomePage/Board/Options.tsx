@@ -113,13 +113,13 @@ const Options: React.FC<Iprops> = ({ task }) => {
                 {/* options */}
                 {open && <div className={styles.options}>
 
-                    <EditTask task={task} />
+                    <EditTask task={task} closeOption={() => setOpen(false)} />
 
                     <option>
                         Share
                     </option>
 
-                    <option onClick={showModal}>
+                    <option onClick={showModal} title="Delete task">
                         Delete
                     </option>
 

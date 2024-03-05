@@ -149,7 +149,7 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
 
             const checklistWithoutId = [...checkList]
             // @ts-ignore
-            checklistWithoutId.forEach(c => { delete c.id })
+            checklistWithoutId.forEach(c => { delete c._id })
 
             if (task === undefined) {
                 const taskDoc = await addTaskService({ title, priority, checkList: checklistWithoutId, dueDate: dueDate || undefined }, signalRef.current.signal)
@@ -166,6 +166,7 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
                 dispatch(updateTaskAction(taskDoc))
             }
 
+            setFormErrors({ title: "", dueDate: "", checkList: "", priority: "" })
             setLoading(false);
             closeModal();
             // close modal
@@ -244,7 +245,6 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
 
 
             {/* checkList */}
-
             <ChecklistInput checkList={checkList}
                 errorMsg={formErrors.checkList}
                 addNewCheckList={addNewCheckList} removeCheckList={removeChecklistItem}

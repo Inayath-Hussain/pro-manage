@@ -4,19 +4,25 @@ import useModal from "@web/hooks/useModal";
 
 interface Iprops {
     task: ITaskJSON
+    closeOption: () => void
 }
 
-const EditTask: React.FC<Iprops> = ({ task }) => {
+const EditTask: React.FC<Iprops> = ({ task, closeOption }) => {
 
     const { showModal, hideModal, ModalPortal } = useModal();
 
+    const close = () => {
+        closeOption();
+        hideModal();
+    }
+
     return (
         <>
-            <option onClick={showModal}>
+            <option onClick={showModal} title="Edit task">
                 Edit
             </option>
 
-            {ModalPortal(<TaskFormModal closeModal={hideModal} task={task} />)}
+            {ModalPortal(<TaskFormModal closeModal={close} task={task} />)}
         </>
     );
 }
