@@ -7,8 +7,9 @@ import SettingsPage from './pages/Home/Settings';
 import UserPage from './pages/User/Index';
 import LoginPage from './pages/User/Login';
 import RegisterPage from './pages/User/Register';
-import { routes } from './routes';
 import BoardPage from './pages/Home/Board';
+import PublicTaskPage from './pages/Public/Index';
+import { routes } from './routes';
 
 export function App() {
 
@@ -26,6 +27,9 @@ export function App() {
           <Route path={routes.analytics} element={<AnalyticsPage />} />
           <Route path={routes.settings} element={<SettingsPage />} />
         </Route>
+
+
+        <Route path={routes.public + ":id"} element={<PublicTaskPage />} />
 
         {/* add not found page here */}
 

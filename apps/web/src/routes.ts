@@ -9,5 +9,6 @@ export const routes = {
 
     },
     settings: "/settings",
-    analytics: "/analytics"
+    analytics: "/analytics",
+    public: "/public/"
 }

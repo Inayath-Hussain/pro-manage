@@ -101,6 +101,13 @@ const Options: React.FC<Iprops> = ({ task }) => {
     }
 
 
+    const handleShare = async () => {
+        await navigator.clipboard.writeText(window.location.origin + routes.public + task._id)
+
+        // copied to clipboard toast here
+        setOpen(false)
+
+    }
 
 
     return (
@@ -115,7 +122,7 @@ const Options: React.FC<Iprops> = ({ task }) => {
 
                     <EditTask task={task} closeOption={() => setOpen(false)} />
 
-                    <option>
+                    <option onClick={handleShare}>
                         Share
                     </option>
 
