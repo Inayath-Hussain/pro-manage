@@ -1,4 +1,4 @@
-import { AddTaskMiddlewareError, priorityEnum, ITaskJSON } from "@pro-manage/common-interfaces";
+import { AddTaskMiddlewareError, priorityEnum, ITaskJSON, IChecklist, UpdateTaskMiddlewareError, InvalidTaskId } from "@pro-manage/common-interfaces";
 
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -12,8 +12,9 @@ import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
 import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 import { addTaskService } from "@web/services/api/task/addTask";
-import { addTaskAction } from "@web/store/slices/taskSlice";
-import { HandleChecklistItemChange, IChecklist } from "./TaskForm.interface";
+import { updateTaskService } from "@web/services/api/task/updateTask";
+import { addTaskAction, removeTaskAction, updateTaskAction } from "@web/store/slices/taskSlice";
+import { HandleChecklistItemChange } from "./TaskForm.interface";
 
 import styles from "./TaskForm.module.css"
 
@@ -47,8 +48,9 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
         // "IForm" derived from zod validation enforces that checkList contains atleast 1 element. so used a separate state for easier use
     })
 
+    const deepCopyChecklist = (checkList: IChecklist[]): IChecklist[] => checkList.map(c => ({ ...c }))
 
-    const [checkList, setCheckList] = useState<IChecklist[]>([])
+    const [checkList, setCheckList] = useState<IChecklist[]>(task ? deepCopyChecklist(task.checklist) : [])
 
     const dueDateRef = useRef<HTMLInputElement | null>(null);
 
@@ -83,7 +85,7 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
 
     // update checkList state
     const addNewCheckList = () => {
-        setCheckList([...checkList, { id: Date.now(), description: "", done: false }])
+        setCheckList([...checkList, { _id: Date.now().toString(), description: "", done: false }])
     }
 
 
@@ -99,7 +101,7 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
     // update one of the checklist object properties
     const handleChecklistItemChange: HandleChecklistItemChange = (itemId, detail) => {
         const newCheckList = [...checkList]
-        const item = newCheckList.find(n => n.id === itemId)
+        const item = newCheckList.find(n => n._id === itemId)
 
         if (item === undefined) return console.log("item doesn't exist")
 
@@ -115,14 +117,15 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
                 setCheckList(newCheckList)
                 return
 
+
             default:
                 console.log("invalid key", detail)
         }
     }
 
 
-    const removeChecklistItem = (itemId: number) => {
-        const newCheckList = checkList.filter(c => c.id !== itemId)
+    const removeChecklistItem = (itemId: string) => {
+        const newCheckList = checkList.filter(c => c._id !== itemId)
 
         setCheckList(newCheckList)
     }
@@ -152,13 +155,15 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
                 const taskDoc = await addTaskService({ title, priority, checkList: checklistWithoutId, dueDate: dueDate || undefined }, signalRef.current.signal)
 
                 // dispatch action to add task
-                dispatch(addTaskAction(taskDoc.task))
+                dispatch(addTaskAction(taskDoc))
             }
 
-            if (task !== undefined) {
+            else {
                 // updateTaskService
-                // dispatch action to update task
+                const taskDoc = await updateTaskService({ title, priority, checkList: checklistWithoutId, taskId: task._id, dueDate: dueDate || undefined }, signalRef.current.signal)
 
+                // dispatch action to update task
+                dispatch(updateTaskAction(taskDoc))
             }
 
             setLoading(false);
@@ -181,15 +186,25 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
                 case (ex instanceof UnauthorizedError):
                     navigate(routes.user.login)
                     closeModal();
+                    // Please login again toast here
                     return
 
-                case (ex instanceof AddTaskMiddlewareError):
+
+                case (ex instanceof AddTaskMiddlewareError || ex instanceof UpdateTaskMiddlewareError):
                     return setFormErrors({
                         title: ex.errors.title || "",
                         priority: ex.errors.priority || "",
                         dueDate: ex.errors.dueDate || "",
                         checkList: ex.errors.checkList || ""
                     })
+
+
+                // when editing a task if the task doesn't exist in server
+                case (ex instanceof InvalidTaskId):
+                    dispatch(removeTaskAction({ _id: task?._id as string }))
+                    closeModal()
+                    // task doesn't exist toast here
+                    return
 
 
                 case (ex instanceof NetworkError):

@@ -132,7 +132,7 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
                     {task.priority} Priority
                 </div>
 
-                <Options taskId={task._id} />
+                <Options task={task} />
             </div>
 
 

@@ -27,6 +27,13 @@ const taskSlice = createSlice({
             return state
         },
 
+        updateTaskAction: (state, action: PayloadAction<ITaskJSON>) => {
+            state = state.filter(s => s._id !== action.payload._id)
+            state.push(action.payload)
+
+            return state
+        },
+
         updateTaskStatusAction: (state, action: PayloadAction<IUpdateTaskStatusPayload>) => {
             const index = state.findIndex(s => s._id === action.payload._id)
 
@@ -54,7 +61,7 @@ const taskSlice = createSlice({
 })
 
 
-export const { renewTaskAction, addTaskAction, updateTaskStatusAction, updateDoneAction, removeTaskAction, removeCheckListItemAction } = taskSlice.actions
+export const { renewTaskAction, addTaskAction, updateTaskAction, updateTaskStatusAction, updateDoneAction, removeTaskAction, removeCheckListItemAction } = taskSlice.actions
 
 export const taskSelector = (state: RootState) => state.tasks
 

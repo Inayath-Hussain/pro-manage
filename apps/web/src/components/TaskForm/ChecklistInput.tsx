@@ -1,5 +1,7 @@
+import { IChecklist } from "@pro-manage/common-interfaces";
+
 import DeleteLogo from "@web/assets/icons/delete-logo.svg";
-import { HandleChecklistItemChange, IChecklist } from "../modal/contents/TaskForm.interface";
+import { HandleChecklistItemChange } from "../modal/contents/TaskForm.interface";
 import styles from "./ChecklistInput.module.css"
 import AddLogo from "../Icons/Add";
 import FormError from "../UserPage/ErrorMsg";
@@ -9,7 +11,7 @@ interface Iprops {
     checkList: IChecklist[]
     handleChecklistItemChange: HandleChecklistItemChange
     addNewCheckList: () => void
-    removeCheckList: (itemId: number) => void
+    removeCheckList: (itemId: string) => void
     errorMsg: string
 }
 
@@ -31,15 +33,22 @@ const ChecklistInput: React.FC<Iprops> = ({ checkList, handleChecklistItemChange
 
                 {checkList.map(c => (
 
-                    <div className={styles.checkList_input_container} key={c.id}>
+                    <div className={styles.checkList_input_container} key={c._id}>
+
+
+                        {/* checkbox for done property */}
                         <input className={styles.checkList_done} type="checkbox"
-                            checked={c.done} onChange={() => handleChecklistItemChange(c.id, { key: "done", value: !c.done })} />
+                            checked={c.done} onChange={() => handleChecklistItemChange(c._id, { key: "done", value: !c.done })} />
 
-                        <input type="text" placeholder="Add a task" className={styles.checkList_input}
-                            onChange={(e) => handleChecklistItemChange(c.id, { key: "description", value: e.target.value })} required />
 
+                        {/* text for description property */}
+                        <input type="text" placeholder="Add a task" className={styles.checkList_input} defaultValue={c.description}
+                            onChange={(e) => handleChecklistItemChange(c._id, { key: "description", value: e.target.value })} required />
+
+
+                        {/* delete button */}
                         <button type="button" aria-label="delete check list item" title="Delete check list item"
-                            className={styles.delete_checkList_item_button} onClick={() => removeCheckList(c.id)}>
+                            className={styles.delete_checkList_item_button} onClick={() => removeCheckList(c._id)}>
                             <img src={DeleteLogo} alt="" width={20} />
                         </button>
                     </div>

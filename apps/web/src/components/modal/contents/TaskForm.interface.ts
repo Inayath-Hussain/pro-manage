@@ -1,10 +1,4 @@
 
-export interface IChecklist {
-    id: number
-    description: string
-    done: boolean
-}
-
 interface IDoneDetail {
     key: "done"
     value: boolean
@@ -15,4 +9,4 @@ interface IDescriptionDetail {
     value: string
 }
 
-export type HandleChecklistItemChange = (itemId: number, detail: IDoneDetail | IDescriptionDetail) => void
+export type HandleChecklistItemChange = (itemId: string, detail: IDoneDetail | IDescriptionDetail) => void

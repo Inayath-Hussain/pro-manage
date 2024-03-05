@@ -1,4 +1,4 @@
-import { InvalidTaskId } from "@pro-manage/common-interfaces";
+import { ITaskJSON, InvalidTaskId } from "@pro-manage/common-interfaces";
 
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -12,15 +12,16 @@ import { routes } from "@web/routes";
 import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 import { deleteTaskService } from "@web/services/api/task/deleteTask";
 import { removeTaskAction } from "@web/store/slices/taskSlice";
+import EditTask from "./EditTask";
 
 import styles from "./Options.module.css"
 
 
 interface Iprops {
-    taskId: string
+    task: ITaskJSON
 }
 
-const Options: React.FC<Iprops> = ({ taskId }) => {
+const Options: React.FC<Iprops> = ({ task }) => {
 
     const [open, setOpen] = useState(false);
     // used to keep track of whether the request is still pending
@@ -72,10 +73,10 @@ const Options: React.FC<Iprops> = ({ taskId }) => {
         if (loading) return
 
         try {
-            await deleteTaskService(taskId, signalRef.current.signal)
+            await deleteTaskService(task._id, signalRef.current.signal)
 
             hideModal();
-            dispatch(removeTaskAction({ _id: taskId }))
+            dispatch(removeTaskAction({ _id: task._id }))
         }
         catch (ex) {
             switch (true) {
@@ -87,7 +88,7 @@ const Options: React.FC<Iprops> = ({ taskId }) => {
 
                 case (ex instanceof InvalidTaskId):
                     hideModal();
-                    dispatch(removeTaskAction({ _id: taskId }))
+                    dispatch(removeTaskAction({ _id: task._id }))
                     break;
 
                 case (ex instanceof NetworkError):
@@ -100,16 +101,6 @@ const Options: React.FC<Iprops> = ({ taskId }) => {
     }
 
 
-    interface Ioptions {
-        displayText: string
-        onClick: () => void
-    }
-
-    const options: Ioptions[] = [
-        { displayText: "Edit", onClick: () => { } },
-        { displayText: "Share", onClick: () => { } },
-        { displayText: "Delete", onClick: showModal }
-    ]
 
 
     return (
@@ -122,11 +113,21 @@ const Options: React.FC<Iprops> = ({ taskId }) => {
                 {/* options */}
                 {open && <div className={styles.options}>
 
-                    {options.map(o => (
+                    <EditTask task={task} />
+
+                    <option>
+                        Share
+                    </option>
+
+                    <option onClick={showModal}>
+                        Delete
+                    </option>
+
+                    {/* {options.map(o => (
                         <option onClick={o.onClick} key={o.displayText}>
                             {o.displayText}
                         </option>
-                    ))}
+                    ))} */}
 
                 </div>}
 
