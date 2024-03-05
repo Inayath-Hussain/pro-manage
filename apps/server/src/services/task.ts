@@ -88,6 +88,47 @@ class TaskService {
     }
 
 
+    async getAnalytics(userId: Types.ObjectId) {
+        return await Task.aggregate([
+            {
+                $facet: {
+                    backlog: [
+                        { $match: { user: userId, status: "backlog" } },
+                        { $count: "count" }
+                    ],
+                    progress: [
+                        { $match: { user: userId, status: "in-progress" } },
+                        { $count: "count" }
+                    ],
+                    todo: [
+                        { $match: { user: userId, status: "to-do" } },
+                        { $count: "count" }
+                    ],
+                    done: [
+                        { $match: { user: userId, status: "done" } },
+                        { $count: "count" }
+                    ],
+                    low: [
+                        { $match: { user: userId, priority: "low" } },
+                        { $count: "count" }
+                    ],
+                    moderate: [
+                        { $match: { user: userId, priority: "moderate" } },
+                        { $count: "count" }
+                    ],
+                    high: [
+                        { $match: { user: userId, priority: "high" } },
+                        { $count: "count" }
+                    ],
+                    dueDate: [
+                        { $match: { user: userId, dueDate: { $exists: true } } },
+                        { $count: "count" }
+                    ]
+                }
+            }
+        ])
+    }
+
     async updateTask(taskDoc: ItaskDoc, payload: IUpdateTaskBody) {
         const { title, priority, checkList, dueDate } = payload
 

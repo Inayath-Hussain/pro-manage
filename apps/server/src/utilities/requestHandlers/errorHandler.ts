@@ -9,10 +9,10 @@ export interface Ierror {
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     const { statusCode = 500,
-        message = "Internal server error",
+        message,
         // email = "",
         // logout_user = false
     } = err
 
-    res.status(statusCode).json({ message })
+    res.status(statusCode).json({ message: message || "Internal server error" })
 }
