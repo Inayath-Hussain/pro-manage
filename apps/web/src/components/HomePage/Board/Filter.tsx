@@ -2,7 +2,7 @@ import { getTasksFilterValues } from "@pro-manage/common-interfaces";
 
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ArrowIcon from "@web/assets/icons/down-arrow.svg"
 import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
@@ -11,14 +11,14 @@ import { getTaskService } from "@web/services/api/task/getTask";
 import styles from "./Filter.module.css"
 import { renewTaskAction } from "@web/store/slices/taskSlice";
 import { NetworkError } from "@web/services/api/errors";
+import { filterSelector, updateFilter } from "@web/store/slices/filterSlice";
 
 
 type OptionValues = typeof getTasksFilterValues[number]
 
 const Filter: React.FC = () => {
 
-    // here, 0 - today, 1 - this week, 2 - this month
-    const [selectedFilter, setSelectedFilter] = useState<OptionValues>("week");
+    const selectedFilter = useSelector(filterSelector);
 
     // state to display and hide filter options
     const [open, setOpen] = useState(false);
@@ -64,7 +64,8 @@ const Filter: React.FC = () => {
             dispatch(renewTaskAction(result))
 
             // and then change selectedFilter
-            setSelectedFilter(value)
+
+            dispatch(updateFilter(value))
         }
         catch (ex) {
             switch (true) {
