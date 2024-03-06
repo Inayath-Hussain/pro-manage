@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import z from "zod";
 import FormButton from "@web/components/UserPage/Button";
@@ -10,16 +10,18 @@ import useForm from "@web/hooks/useForm";
 import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
 import { userUpdateService } from "@web/services/api/user/userUpdateService";
-import { userInfoSelector } from "@web/store/slices/userInfoSlice";
+import { updateNameAction, userInfoSelector } from "@web/store/slices/userInfoSlice";
 
 import commonStyle from "./Index.module.css";
 import styles from "./Settings.module.css";
 
 import { UserUpdateMiddlewareError } from "@pro-manage/common-interfaces";
+import { UnauthorizedError } from "@web/services/api/errors";
 
 
 const SettingsPage = () => {
 
+    const dispatch = useDispatch();
     const userInfo = useSelector(userInfoSelector)
     const navigate = useNavigate();
 
@@ -119,46 +121,85 @@ const SettingsPage = () => {
             setLoading(false)
             setFormErrors(initialValues)
             setSubmitionError("")
+            dispatch(updateNameAction({ name: formValues.name }))
+
 
             // toast for successful user updation
         }
         catch (ex) {
             setLoading(false)
 
-            if (ex instanceof z.ZodError) {
-                const { oldPassword, newPassword, all } = ex.formErrors.fieldErrors
+            switch (true) {
+                case (ex instanceof z.ZodError):
+                    const { oldPassword, newPassword, all } = ex.formErrors.fieldErrors
 
-                // if zod field error contains a key called "all" then it means all the input fields are empty.
-                if (all) {
+                    // if zod field error contains a key called "all" then it means all the input fields are empty.
+                    if (all) {
+                        setFormErrors(initialValues)
+                        return setSubmitionError(all[0])
+                    }
+
+                    // if executor reaches here then password fields did not pass their schema
+                    setSubmitionError("");
+
+                    setFormErrors({
+                        ...formErrors,
+                        oldPassword: oldPassword ? oldPassword[0] : "",
+                        newPassword: newPassword ? newPassword[0] : ""
+                    })
+                    break;
+
+
+                case (ex instanceof UserUpdateMiddlewareError):
+                    setFormErrors(ex.errors)
+                    setSubmitionError("")
+                    break;
+
+
+                case (ex instanceof UnauthorizedError):
+                    navigate(routes.user.login)
+                    break;
+
+
+                default:
                     setFormErrors(initialValues)
-                    return setSubmitionError(all[0])
-                }
-
-                // if executor reaches here then password fields did not pass their schema
-                setSubmitionError("");
-
-                setFormErrors({
-                    ...formErrors,
-                    oldPassword: oldPassword ? oldPassword[0] : "",
-                    newPassword: newPassword ? newPassword[0] : ""
-                })
+                    setSubmitionError(ex as string)
             }
 
-            // if error is for input values
-            else if (ex instanceof UserUpdateMiddlewareError) {
-                setFormErrors(ex.errors)
-                setSubmitionError("")
-            }
+            // if (ex instanceof z.ZodError) {
+            //     const { oldPassword, newPassword, all } = ex.formErrors.fieldErrors
 
-            // if unauthorized error(invalid auth tokens)
-            else if (ex === false) {
-                navigate(routes.user.login)
-            }
+            //     // if zod field error contains a key called "all" then it means all the input fields are empty.
+            //     if (all) {
+            //         setFormErrors(initialValues)
+            //         return setSubmitionError(all[0])
+            //     }
 
-            else {
-                setFormErrors(initialValues)
-                setSubmitionError(ex as string)
-            }
+            //     // if executor reaches here then password fields did not pass their schema
+            //     setSubmitionError("");
+
+            //     setFormErrors({
+            //         ...formErrors,
+            //         oldPassword: oldPassword ? oldPassword[0] : "",
+            //         newPassword: newPassword ? newPassword[0] : ""
+            //     })
+            // }
+
+            // // if error is for input values
+            // else if (ex instanceof UserUpdateMiddlewareError) {
+            //     setFormErrors(ex.errors)
+            //     setSubmitionError("")
+            // }
+
+            // // if unauthorized error(invalid auth tokens)
+            // else if (ex instanceof UnauthorizedError) {
+            //     navigate(routes.user.login)
+            // }
+
+            // else {
+            //     setFormErrors(initialValues)
+            //     setSubmitionError(ex as string)
+            // }
         }
     }
 

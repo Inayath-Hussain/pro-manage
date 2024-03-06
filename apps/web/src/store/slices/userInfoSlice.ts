@@ -1,7 +1,7 @@
 import { UserInfo } from "@pro-manage/common-interfaces"
 
 import { GenericAbortSignal } from "axios"
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
 import { getUserInfoService } from "@web/services/api/user/getUserInfoService"
 import { RootState } from "../index"
 import { NetworkError, UnauthorizedError } from "@web/services/api/errors"
@@ -44,11 +44,11 @@ const userInfoSlice = createSlice({
     initialState: initialState,
     name: "userInfo",
     reducers: {
-        clearUserInfo: () => {
+        clearUserInfoAction: () => {
             return initialState
         },
 
-        updateName: (state, action) => {
+        updateNameAction: (state, action: PayloadAction<{ name: string }>) => {
             state.name = action.payload.name
         }
     },
@@ -73,7 +73,7 @@ const userInfoSlice = createSlice({
 
 
 
-export const { clearUserInfo, updateName } = userInfoSlice.actions
+export const { clearUserInfoAction, updateNameAction } = userInfoSlice.actions
 
 export const userInfoSelector = (state: RootState) => state.userInfo
 

@@ -9,7 +9,7 @@ import { useOnline } from "@web/hooks/useOnline";
 import { routes } from "@web/routes";
 import { NetworkError } from "@web/services/api/errors";
 import { logoutService } from "@web/services/api/user/logoutService";
-import { clearUserInfo } from "@web/store/slices/userInfoSlice";
+import { clearUserInfoAction } from "@web/store/slices/userInfoSlice";
 import ConfirmModalComponent from "../modal/contents/Confirm";
 
 import AnalyticsIcon from "../Icons/Analytics";
@@ -42,7 +42,7 @@ const NavBar = () => {
         try {
             await logoutService(signalRef.current.signal)
 
-            dispatch(clearUserInfo());
+            dispatch(clearUserInfoAction());
             navigate(routes.user.login);
             hideModal();
         }
