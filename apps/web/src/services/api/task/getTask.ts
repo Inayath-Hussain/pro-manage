@@ -2,12 +2,13 @@ import { AxiosError, GenericAbortSignal } from "axios";
 import { apiUrls } from "../URLs";
 import { axiosInstance } from "../instance";
 import { NetworkError } from "../errors";
+import { ITaskJSON } from "@pro-manage/common-interfaces";
 
 
 type IFilter = "day" | "week" | "month"
 
 export const getTaskService = async (filter: IFilter, signal: GenericAbortSignal) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<ITaskJSON[]>(async (resolve, reject) => {
         try {
             const result = await axiosInstance.get(apiUrls.getTask + "?filter=" + filter, { signal, withCredentials: true })
 

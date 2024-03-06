@@ -163,7 +163,7 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
                 const taskDoc = await updateTaskService({ title, priority, checkList: checklistWithoutId, taskId: task._id, dueDate: dueDate || undefined }, signalRef.current.signal)
 
                 // dispatch action to update task
-                dispatch(updateTaskAction(taskDoc))
+                dispatch(updateTaskAction({ currentStatus: task.status, task: taskDoc }))
             }
 
             setFormErrors({ title: "", dueDate: "", checkList: "", priority: "" })
@@ -202,7 +202,7 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
 
                 // when editing a task if the task doesn't exist in server
                 case (ex instanceof InvalidTaskId):
-                    dispatch(removeTaskAction({ _id: task?._id as string }))
+                    dispatch(removeTaskAction({ status: task?.status as ITaskJSON["status"], _id: task?._id as string }))
                     closeModal()
                     // task doesn't exist toast here
                     return

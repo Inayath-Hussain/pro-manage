@@ -61,7 +61,7 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
             if (result) {
                 setLoading(false)
                 // dispatch action to update checkList item
-                dispatch(updateDoneAction({ taskId: task._id, checkListId, done: !item.done }))
+                dispatch(updateDoneAction({ status: task.status, data: { taskId: task._id, checkListId, done: !item.done } }))
 
             }
         }
@@ -72,12 +72,12 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
                     return navigate(routes.user.login)
 
                 case (ex instanceof InvalidTaskId):
-                    dispatch(removeTaskAction({ _id: task._id }))
+                    dispatch(removeTaskAction({ status: task.status, _id: task._id }))
                     return
 
                 case (ex instanceof InvalidCheckListItemId):
                     // dispatch to remove item from checkList
-                    dispatch(removeCheckListItemAction({ taskId: task._id, itemID: checkListId }))
+                    dispatch(removeCheckListItemAction({ status: task.status, taskId: task._id, itemID: checkListId }))
                     return
 
                 case (ex instanceof NetworkError):

@@ -26,7 +26,7 @@ const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
     // used to track if a request is in progress
     const [loading, setLoading] = useState(false);
 
-    const handleChangeStatus = async (status: Iprops['status']) => {
+    const handleChangeStatus = async (localStatus: Iprops['status']) => {
 
         if (loading === true) return console.log("status buttons toast") //toast here
 
@@ -34,12 +34,12 @@ const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
         try {
 
             setLoading(true)
-            const result = await updateTaskStatusService({ status, taskId }, signalRef.current.signal)
+            const result = await updateTaskStatusService({ status: localStatus, taskId }, signalRef.current.signal)
 
             if (result) {
                 setLoading(false)
 
-                dispatch(updateTaskStatusAction({ _id: taskId, status }))
+                dispatch(updateTaskStatusAction({ currentStatus: status, data: { _id: taskId, status: localStatus } }))
                 // on success dispatch action to update task
             }
         }

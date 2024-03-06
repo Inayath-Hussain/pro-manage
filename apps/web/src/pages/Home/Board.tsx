@@ -1,4 +1,4 @@
-import { ITaskJSON } from "@pro-manage/common-interfaces";
+import { ITaskJSON, priorityEnum } from "@pro-manage/common-interfaces";
 
 import { useSelector } from "react-redux";
 import moment from "moment"
@@ -12,6 +12,10 @@ import Section, { ISectionprops } from "@web/components/HomePage/Board/Section";
 import { taskSelector } from "@web/store/slices/taskSlice";
 import { useEffect, useState } from "react";
 
+type IpriorityOrder = {
+    [k in typeof priorityEnum[number]]: number
+}
+
 const BoardPage = () => {
 
     const [backLogTasks, setBacklogTasks] = useState<ITaskJSON[]>([]);
@@ -23,9 +27,8 @@ const BoardPage = () => {
     const { name } = useSelector(userInfoSelector)
     const tasks = useSelector(taskSelector);
 
-    console.log(tasks)
-    // "backlog", "in-progress", "to-do", "done"
 
+    // "backlog", "in-progress", "to-do", "done"
     const sections: Required<ISectionprops>[] = [
         { title: "Backlog", tasks: backLogTasks },
         { title: "To do", tasks: todoTasks },
@@ -34,17 +37,31 @@ const BoardPage = () => {
     ]
 
     useEffect(() => {
-        const backLogTasks = tasks.filter(t => t.status === "backlog")
-        setBacklogTasks(backLogTasks)
+        // priority order values used to sort them from high to low
+        const priorityOrder: IpriorityOrder = {
+            high: 1,
+            moderate: 2,
+            low: 3
+        }
 
-        const todoTasks = tasks.filter(t => t.status === "to-do")
-        setToDoTasks(todoTasks)
+        // sort arrays based on 
+        const backlog = [...tasks.backlog]
+        backlog.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
+        setBacklogTasks(backlog)
 
-        const inProgressTasks = tasks.filter(t => t.status === "in-progress")
-        setInProgressTasks(inProgressTasks)
 
-        const doneTasks = tasks.filter(t => t.status === "done")
-        setDoneTasks(doneTasks)
+        const inProgress = [...tasks["in-progress"]]
+        inProgress.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
+        setInProgressTasks(inProgress)
+
+
+        const todo = [...tasks["to-do"]]
+        todo.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
+        setToDoTasks(todo)
+
+        const done = [...tasks.done]
+        done.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
+        setDoneTasks(done)
 
     }, [tasks])
 

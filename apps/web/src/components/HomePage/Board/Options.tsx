@@ -76,7 +76,7 @@ const Options: React.FC<Iprops> = ({ task }) => {
             await deleteTaskService(task._id, signalRef.current.signal)
 
             hideModal();
-            dispatch(removeTaskAction({ _id: task._id }))
+            dispatch(removeTaskAction({ status: task.status, _id: task._id }))
         }
         catch (ex) {
             switch (true) {
@@ -88,7 +88,7 @@ const Options: React.FC<Iprops> = ({ task }) => {
 
                 case (ex instanceof InvalidTaskId):
                     hideModal();
-                    dispatch(removeTaskAction({ _id: task._id }))
+                    dispatch(removeTaskAction({ status: task.status, _id: task._id }))
                     break;
 
                 case (ex instanceof NetworkError):
