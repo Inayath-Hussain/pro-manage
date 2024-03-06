@@ -1,4 +1,3 @@
-import { IRegisterMiddlewareError } from "@pro-manage/common-interfaces";
 import { RequestHandler } from "express";
 import { validationResult, ValidationError } from "express-validator"
 
@@ -24,7 +23,7 @@ export const checkForErrors: RequestHandler = (req, res, next) => {
 
         const message = "Invalid body"
 
-        const responseObj: IRegisterMiddlewareError = { message, errors: fieldErrors }
+        const responseObj = { message, errors: fieldErrors }
 
         return res.status(422).json(responseObj)
 

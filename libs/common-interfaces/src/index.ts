@@ -1,4 +1,7 @@
 export * from './lib/common-interfaces';
+
+export * from "./lib/user/register";
+
 export * from "./lib/userUpdate";
 export * from "./lib/userInfo";
 
@@ -17,13 +20,6 @@ export interface ILoginBody {
     password: string
 }
 
-
-export interface IRegisterBody {
-    name: string
-    email: string
-    password: string
-}
-
 interface IUnknownField {
     unknownField: string
 }
@@ -33,7 +29,3 @@ export interface ILoginMiddlewareError {
     errors: Partial<ILoginBody & IUnknownField>
 }
 
-export interface IRegisterMiddlewareError {
-    message: string
-    errors: Partial<IRegisterBody & IUnknownField>
-}

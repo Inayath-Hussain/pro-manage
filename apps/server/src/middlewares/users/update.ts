@@ -39,15 +39,13 @@ export const validateUpdateBody: RequestHandler<{}, {}, IUpdateBody> = async (re
         // checks if oldPassword is present but newPassword isn't
         if (!newPassword) errorObj.addFieldError("newPassword", "newPassword is required")
 
-        else {
+        if (oldPassword && newPassword) {
             // check if newPassword meets password criteria
             if (passwordValidator.validLength(newPassword) === false) errorObj.addFieldError("newPassword", passwordValidatorErrorMessages.length)
             else if (passwordValidator.isStrongPassword(newPassword) === false) errorObj.addFieldError("newPassword", passwordValidatorErrorMessages.StrongPassword)
         }
     }
 
-    // if Object.keys(errorObj) = 0 call next
-    // else send 422 response along with errorObj
 
     // checks if errorObj is empty
     if (Object.keys(errorObj.errors).length > 0) return res.status(422).json(errorObj)
