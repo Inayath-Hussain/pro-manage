@@ -1,6 +1,7 @@
+import { ILoginBody } from "@pro-manage/common-interfaces";
+
 import { compare } from "bcrypt"
 import { RequestHandler } from "express";
-import { ILoginBody } from "@pro-manage/common-interfaces"
 import { userService } from "../../services/user";
 import { Ierror } from "../../utilities/requestHandlers/errorHandler";
 import { createAccessToken } from "../../utilities/tokens/accessToken";
