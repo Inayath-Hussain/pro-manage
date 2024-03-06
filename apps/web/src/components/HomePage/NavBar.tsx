@@ -67,8 +67,6 @@ const NavBar = () => {
     ]
 
 
-    // const { ModalPortal } = useModalComponent(<ConfirmModalComponent action="Logout" handleConfirm={handleLogout} />);
-
     return (
 
         <section className={styles.nav_container} >

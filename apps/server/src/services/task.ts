@@ -140,13 +140,6 @@ class TaskService {
         taskDoc.isNew = false
 
         return await taskDoc.save()
-
-        // return await taskDoc.updateOne({
-        //     title: title,
-        //     priority: priority,
-        //     checklist: checkList,
-        //     dueDate
-        // })
     }
 
 

@@ -130,11 +130,6 @@ const Options: React.FC<Iprops> = ({ task }) => {
                         Delete
                     </option>
 
-                    {/* {options.map(o => (
-                        <option onClick={o.onClick} key={o.displayText}>
-                            {o.displayText}
-                        </option>
-                    ))} */}
 
                 </div>}
 

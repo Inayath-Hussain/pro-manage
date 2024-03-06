@@ -184,40 +184,6 @@ const SettingsPage = () => {
                     setSubmitionError(ex as string)
             }
 
-            // if (ex instanceof z.ZodError) {
-            //     const { oldPassword, newPassword, all } = ex.formErrors.fieldErrors
-
-            //     // if zod field error contains a key called "all" then it means all the input fields are empty.
-            //     if (all) {
-            //         setFormErrors(initialValues)
-            //         return setSubmitionError(all[0])
-            //     }
-
-            //     // if executor reaches here then password fields did not pass their schema
-            //     setSubmitionError("");
-
-            //     setFormErrors({
-            //         ...formErrors,
-            //         oldPassword: oldPassword ? oldPassword[0] : "",
-            //         newPassword: newPassword ? newPassword[0] : ""
-            //     })
-            // }
-
-            // // if error is for input values
-            // else if (ex instanceof UserUpdateMiddlewareError) {
-            //     setFormErrors(ex.errors)
-            //     setSubmitionError("")
-            // }
-
-            // // if unauthorized error(invalid auth tokens)
-            // else if (ex instanceof UnauthorizedError) {
-            //     navigate(routes.user.login)
-            // }
-
-            // else {
-            //     setFormErrors(initialValues)
-            //     setSubmitionError(ex as string)
-            // }
         }
     }
 
