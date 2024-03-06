@@ -103,34 +103,6 @@ const RegisterPage = () => {
                     setSubmitionError(ex as string)
 
             }
-
-            // // if error is validation error
-            // if (ex instanceof z.ZodError) {
-            //     const { name, email, password, confirmPassword } = ex.formErrors.fieldErrors
-
-            //     // remove if any form submition errors from previous attempt are present
-            //     setSubmitionError('')
-
-            //     return setFormErrors({
-            //         name: name ? name[0] : "",
-            //         email: email ? email[0] : "",
-            //         password: password ? password[0] : "",
-            //         confirmPassword: confirmPassword ? confirmPassword[0] : ""
-            //     })
-            // }
-
-
-            // // if error is caused due to invalid form input values
-            // else if (typeof ex === "object") {
-            //     return setFormErrors(ex as any)
-            // }
-
-            // else {
-            //     // remove if any form input errors from previous submition attempt are present
-            //     setFormErrors(initialValues)
-            //     setSubmitionError(ex as string)
-            // }
-
             setLoading(false)
         }
     }

@@ -9,6 +9,8 @@ import { routes } from "@web/routes";
 import { loginService } from "@web/services/api/user/loginService";
 import { useOnline } from "@web/hooks/useOnline";
 import useForm from "@web/hooks/useForm";
+import { LoginBodyError } from "@pro-manage/common-interfaces";
+import { NetworkError } from "@web/services/api/errors";
 
 const LoginPage = () => {
 
@@ -55,27 +57,33 @@ const LoginPage = () => {
             navigate(routes.home)
         }
         catch (ex) {
-            // if error is a validation error 
-            if (ex instanceof z.ZodError) {
-                const { email, password } = ex.formErrors.fieldErrors
+            switch (true) {
+                case (ex instanceof z.ZodError):
+                    const { email, password } = ex.formErrors.fieldErrors
 
-                setSubmitionError('')
+                    setSubmitionError('')
 
-                setFormErrors({
-                    email: email ? email[0] : "",
-                    password: password ? password[0] : ""
-                })
+                    setFormErrors({
+                        email: email ? email[0] : "",
+                        password: password ? password[0] : ""
+                    })
+                    break;
+
+
+                case (ex instanceof LoginBodyError):
+                    setFormErrors(ex.errors)
+                    break;
+
+                case (ex instanceof NetworkError):
+                    setFormErrors(initialValues)
+                    setSubmitionError(ex.message)
+                    break;
+
+                default:
+                    setFormErrors(initialValues)
+                    setSubmitionError(ex as string)
+
             }
-
-            // if error is caused due to invalid form input values
-            else if (typeof ex === "object") {
-                setFormErrors(ex as any)
-            }
-            else {
-                setFormErrors(initialValues)
-                setSubmitionError(ex as string)
-            }
-
         }
 
         setLoading(false)

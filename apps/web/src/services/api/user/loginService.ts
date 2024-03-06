@@ -1,8 +1,9 @@
-import { ILoginBody, ILoginMiddlewareError } from "@pro-manage/common-interfaces"
+import { ILoginBody, LoginBodyError } from "@pro-manage/common-interfaces"
 
 import { AxiosError, GenericAbortSignal, HttpStatusCode } from "axios"
 import { axiosInstance } from "../instance"
 import { apiUrls } from "../URLs"
+import { NetworkError } from "../errors"
 
 /**
  * api call to authenticate(or login) user
@@ -17,24 +18,22 @@ export const loginService = async (payload: ILoginBody, signal: GenericAbortSign
         catch (ex) {
             if (ex instanceof AxiosError) {
 
-                // middleware errors
-                // if request body validation was failed
-                if (ex.response?.status === HttpStatusCode.UnprocessableEntity) {
-                    const { errors } = ex.response?.data as ILoginMiddlewareError
+                switch (true) {
+                    case (ex.response?.status === HttpStatusCode.UnprocessableEntity):
+                        const loginBodyError = new LoginBodyError(ex.response.data.message, ex.response.data.errors);
+                        return reject(loginBodyError)
 
-                    reject(errors)
-                }
+                    // if email already exists or any error occurred in server
+                    case (ex.response?.status === HttpStatusCode.BadRequest ||
+                        ex.response?.status === HttpStatusCode.InternalServerError):
+                        const { message } = ex.response?.data
 
-                // if email already exists or any error occurred in server
-                if (ex.response?.status === HttpStatusCode.BadRequest ||
-                    ex.response?.status === HttpStatusCode.InternalServerError) {
-                    // controller errors
-                    const { message } = ex.response?.data
+                        return reject(message as string)
 
-                    reject(message as string)
-                }
-                else {
-                    reject("Please try again later")
+
+                    case (ex.code === AxiosError.ERR_NETWORK):
+                        const networkErrorObj = new NetworkError();
+                        return reject(networkErrorObj)
                 }
             }
 
