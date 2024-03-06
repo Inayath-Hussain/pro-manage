@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import z from "zod";
@@ -104,6 +104,24 @@ const SettingsPage = () => {
         loading, setLoading,
         handleChange
     } = useForm({ initialValues })
+
+
+    useEffect(() => {
+        switch (true) {
+            case (!isOnline):
+                setSubmitionError("You're offline.")
+                break;
+
+            case (userInfo.status === "error"):
+                setSubmitionError("Something went wrong. Please try again later")
+                break;
+
+            default:
+                setSubmitionError("")
+        }
+
+    }, [userInfo, isOnline])
+
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

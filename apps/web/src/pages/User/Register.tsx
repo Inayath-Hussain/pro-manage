@@ -9,6 +9,8 @@ import { routes } from "@web/routes";
 import { registerService } from "@web/services/api/user/registerService";
 import { useOnline } from "@web/hooks/useOnline";
 import useForm from "@web/hooks/useForm";
+import { RegisterBodyError } from "@pro-manage/common-interfaces";
+import { NetworkError } from "@web/services/api/errors";
 
 
 
@@ -71,33 +73,63 @@ const RegisterPage = () => {
             navigate(routes.home)
         }
         catch (ex) {
+            setLoading(false)
 
-            // if error is validation error
-            if (ex instanceof z.ZodError) {
-                const { name, email, password, confirmPassword } = ex.formErrors.fieldErrors
+            switch (true) {
+                case (ex instanceof z.ZodError):
+                    const { name, email, password, confirmPassword } = ex.formErrors.fieldErrors
 
-                // remove if any form submition errors from previous attempt are present
-                setSubmitionError('')
+                    // remove if any form submition errors from previous attempt are present
+                    setSubmitionError('')
 
-                return setFormErrors({
-                    name: name ? name[0] : "",
-                    email: email ? email[0] : "",
-                    password: password ? password[0] : "",
-                    confirmPassword: confirmPassword ? confirmPassword[0] : ""
-                })
+                    return setFormErrors({
+                        name: name ? name[0] : "",
+                        email: email ? email[0] : "",
+                        password: password ? password[0] : "",
+                        confirmPassword: confirmPassword ? confirmPassword[0] : ""
+                    })
+
+
+                case (ex instanceof RegisterBodyError):
+                    return setFormErrors(ex.errors)
+
+                case (ex instanceof NetworkError):
+                    setFormErrors(initialValues)
+                    setSubmitionError(ex.message)
+                    return
+
+                default:
+                    setFormErrors(initialValues)
+                    setSubmitionError(ex as string)
+
             }
 
+            // // if error is validation error
+            // if (ex instanceof z.ZodError) {
+            //     const { name, email, password, confirmPassword } = ex.formErrors.fieldErrors
 
-            // if error is caused due to invalid form input values
-            else if (typeof ex === "object") {
-                return setFormErrors(ex as any)
-            }
+            //     // remove if any form submition errors from previous attempt are present
+            //     setSubmitionError('')
 
-            else {
-                // remove if any form input errors from previous submition attempt are present
-                setFormErrors(initialValues)
-                setSubmitionError(ex as string)
-            }
+            //     return setFormErrors({
+            //         name: name ? name[0] : "",
+            //         email: email ? email[0] : "",
+            //         password: password ? password[0] : "",
+            //         confirmPassword: confirmPassword ? confirmPassword[0] : ""
+            //     })
+            // }
+
+
+            // // if error is caused due to invalid form input values
+            // else if (typeof ex === "object") {
+            //     return setFormErrors(ex as any)
+            // }
+
+            // else {
+            //     // remove if any form input errors from previous submition attempt are present
+            //     setFormErrors(initialValues)
+            //     setSubmitionError(ex as string)
+            // }
 
             setLoading(false)
         }

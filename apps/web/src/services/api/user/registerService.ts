@@ -1,8 +1,9 @@
-import { IRegisterBody, IRegisterMiddlewareError } from "@pro-manage/common-interfaces";
+import { IRegisterBody, RegisterBodyError } from "@pro-manage/common-interfaces";
 
 import { AxiosError, GenericAbortSignal, HttpStatusCode } from "axios";
 import { axiosInstance } from "../instance";
 import { apiUrls } from "../URLs";
+import { NetworkError } from "../errors";
 
 
 /**
@@ -19,27 +20,20 @@ export const registerService = async (payload: IRegisterBody, signal: GenericAbo
         }
         catch (ex) {
             if (ex instanceof AxiosError) {
+                switch (true) {
+                    case (ex.response?.status === HttpStatusCode.UnprocessableEntity):
+                        const registerBodyError = new RegisterBodyError(ex.response.data.message, ex.response.data.errors)
+                        return reject(registerBodyError)
 
-                // middleware errors
-                // if request body validation was failed
-                if (ex.response?.status === HttpStatusCode.UnprocessableEntity) {
-                    const { errors } = ex.response?.data as IRegisterMiddlewareError
+                    case (ex.response?.status === HttpStatusCode.Conflict ||
+                        ex.response?.status === HttpStatusCode.InternalServerError):
+                        const { message } = ex.response?.data
+                        return reject(message as string)
 
-                    reject(errors)
+                    case (ex.code === AxiosError.ERR_NETWORK):
+                        const networkErrorObj = new NetworkError();
+                        return reject(networkErrorObj.message)
                 }
-
-                // if email already exists or any error occurred in server
-                if (ex.response?.status === HttpStatusCode.Conflict ||
-                    ex.response?.status === HttpStatusCode.InternalServerError) {
-                    // controller errors
-                    const { message } = ex.response?.data
-
-                    reject(message as string)
-                }
-                else {
-                    reject("Please try again later")
-                }
-
             }
 
             console.log(ex)
