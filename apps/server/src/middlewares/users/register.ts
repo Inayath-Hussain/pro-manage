@@ -5,9 +5,6 @@ import { trim } from "validator";
 import { emailValidator, nameValidator, p } from "./validators";
 
 
-
-
-
 export const validateRegisterBody: RequestHandler<{}, {}, IRegisterBody> = (req, res, next) => {
     let { email, name, password } = req.body
 

@@ -1,6 +1,0 @@
-{
-  "scripts": {
-    "dev": "set NODE_ENV=development && nodemon ./src/server.ts",
-    "test": "set NODE_ENV=test && jest --verbose"
-  }
-}
