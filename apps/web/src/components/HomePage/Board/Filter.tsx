@@ -1,17 +1,18 @@
 import { getTasksFilterValues } from "@pro-manage/common-interfaces";
 
 import { useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import ArrowIcon from "@web/assets/icons/down-arrow.svg"
 import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
 import { getTaskService } from "@web/services/api/task/getTask";
-
-import styles from "./Filter.module.css"
-import { renewTaskAction } from "@web/store/slices/taskSlice";
 import { NetworkError } from "@web/services/api/errors";
 import { filterSelector, updateFilter } from "@web/store/slices/filterSlice";
+import { renewTaskAction } from "@web/store/slices/taskSlice";
+
+import styles from "./Filter.module.css"
 
 
 type OptionValues = typeof getTasksFilterValues[number]
@@ -70,15 +71,18 @@ const Filter: React.FC = () => {
         catch (ex) {
             switch (true) {
                 case (ex === false):
+                    toast("Please login again", { autoClose: 5000, type: "error" })
                     navigate(routes.user.login)
                     break;
 
                 case (ex instanceof NetworkError):
+                    toast(ex.message, { autoClose: 5000, type: "error" })
                     // Check your network and try again toast
                     break;
 
 
                 default:
+                    toast("Something went wrong try again later", { autoClose: 5000, type: "error" })
                     console.log(ex)
                 // something went wrong try again later toast
             }

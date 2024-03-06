@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import Logo from "@web/assets/icons/pro-manage-logo.svg"
 import LogoutIcon from '@web/assets/icons/Logout.svg'
@@ -47,9 +48,10 @@ const NavBar = () => {
             hideModal();
         }
         catch (ex) {
-            if (ex instanceof NetworkError) return  //Check your network and try again toast here
+            if (ex instanceof NetworkError) return toast(ex.message, { type: "error" })  //Check your network and try again toast here
 
             // Something went wrong toast here
+            toast("Something went wrong toast", { type: "error" })
         }
     }
 

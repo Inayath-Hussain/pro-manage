@@ -2,14 +2,15 @@ import { IAnalytics } from "@pro-manage/common-interfaces";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useAbortController } from "@web/hooks/useAbortContoller";
+import { useOnline } from "@web/hooks/useOnline";
+import { routes } from "@web/routes";
 import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 import { getAnalyticsService } from "@web/services/api/task/getAnalytics";
 
 import commonStyle from "./Index.module.css"
 import styles from "./Analytics.module.css";
-import { routes } from "@web/routes";
-import { useOnline } from "@web/hooks/useOnline";
 
 const AnalyticsPage = () => {
 
@@ -26,7 +27,7 @@ const AnalyticsPage = () => {
     useEffect(() => {
         const call = async () => {
             if (!isOnline) {
-                // connect to a network and try again toast
+                toast("Connect to a network and try again")
                 return setError("You are offline")
             }
 
@@ -39,16 +40,17 @@ const AnalyticsPage = () => {
             catch (ex) {
                 switch (true) {
                     case (ex instanceof NetworkError):
-                        // Check your network and try again toast
+                        toast(ex.message, { autoClose: 5000, type: "error" })
                         setError(ex.message)
                         break
 
                     case (ex instanceof UnauthorizedError):
+                        toast(ex.message, { autoClose: 5000, type: "error" })
                         navigate(routes.user.login)
                         break;
 
                     default:
-                        // Please try again later toast
+                        toast("Something went wrong. Please try again later", { autoClose: 5000, type: "error" })
                         setError(ex as string)
                         break;
                 }

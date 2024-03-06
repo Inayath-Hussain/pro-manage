@@ -1,5 +1,6 @@
 // import styles from './app.module.css';
 
+import { ToastContainer } from "react-toastify";
 import { Route, Routes } from 'react-router-dom';
 import AnalyticsPage from './pages/Home/Analytics';
 import HomePage from './pages/Home/Index';
@@ -10,6 +11,8 @@ import RegisterPage from './pages/User/Register';
 import BoardPage from './pages/Home/Board';
 import PublicTaskPage from './pages/Public/Index';
 import { routes } from './routes';
+
+import "react-toastify/ReactToastify.css"
 
 export function App() {
 
@@ -34,6 +37,8 @@ export function App() {
         {/* add not found page here */}
 
       </Routes >
+
+      <ToastContainer />
     </>
   );
 

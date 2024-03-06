@@ -1,15 +1,17 @@
 import { InvalidTaskId, statusEnum } from "@pro-manage/common-interfaces"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
+import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { Id, toast } from "react-toastify"
 import { useAbortController } from "@web/hooks/useAbortContoller"
+import { routes } from "@web/routes"
 import { updateTaskStatusService } from "@web/services/api/task/updateTaskStatus"
 import { NetworkError, UnauthorizedError } from "@web/services/api/errors"
+import { updateTaskStatusAction } from "@web/store/slices/taskSlice"
+import { errorToast } from "@web/utilities/toast/errorToast"
 
 import styles from "./StatusButtons.module.css"
-import { routes } from "@web/routes"
-import { useDispatch } from "react-redux"
-import { updateTaskStatusAction } from "@web/store/slices/taskSlice"
 
 interface Iprops {
     taskId: string
@@ -18,6 +20,7 @@ interface Iprops {
 
 const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
 
+    const toastIdRef = useRef<Id>("");
     const { signalRef } = useAbortController()
 
     const navigate = useNavigate()
@@ -28,17 +31,18 @@ const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
 
     const handleChangeStatus = async (localStatus: Iprops['status']) => {
 
-        if (loading === true) return console.log("status buttons toast") //toast here
+        if (loading === true) return toast("Updating task please wait...", { type: 'warning', autoClose: 5000 }) //toast here
 
         // make service call to update status
         try {
 
             setLoading(true)
+            toastIdRef.current = toast.loading("Updating Task")
             const result = await updateTaskStatusService({ status: localStatus, taskId }, signalRef.current.signal)
 
             if (result) {
                 setLoading(false)
-
+                toast.update(toastIdRef.current, { render: "Task Updated", autoClose: 5000, type: "success" })
                 dispatch(updateTaskStatusAction({ currentStatus: status, data: { _id: taskId, status: localStatus } }))
                 // on success dispatch action to update task
             }
@@ -47,18 +51,20 @@ const StatusButtons: React.FC<Iprops> = ({ status, taskId }) => {
             setLoading(false)
             switch (true) {
                 case (ex instanceof NetworkError):
-                    console.log("network error toast", ex.message)
+                    errorToast(toastIdRef.current, ex.message)
                     break;
 
                 case (ex instanceof InvalidTaskId):
-                    console.log("task donot exist toast", ex.message)
+                    errorToast(toastIdRef.current, ex.message)
                     break;
 
                 case (ex instanceof UnauthorizedError):
                     navigate(routes.user.login)
+                    errorToast(toastIdRef.current, "Please login again")
                     return
 
                 default:
+                    errorToast(toastIdRef.current, "Something went wrong try again later")
                     console.log(ex)
             }
         }

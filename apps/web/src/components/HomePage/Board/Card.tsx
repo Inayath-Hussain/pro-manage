@@ -1,19 +1,21 @@
 import { InvalidCheckListItemId, InvalidTaskId, ITaskJSON } from "@pro-manage/common-interfaces";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { toast, Id } from "react-toastify";
 import CheckListArror from "@web/assets/icons/checkList-arrow.svg"
 import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
-import { NetworkError } from "@web/services/api/errors";
+import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 import { updateDoneService } from "@web/services/api/task/updateDone";
 import { removeCheckListItemAction, removeTaskAction, updateDoneAction } from "@web/store/slices/taskSlice";
 import Options from "./Options";
 import StatusButtons from "./StatusButtons";
 
 import styles from "./Card.module.css"
+import { errorToast } from "@web/utilities/toast/errorToast";
 
 
 interface Iprops {
@@ -29,6 +31,7 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
     // state to keep track of whether the api call is finished or not
     const [loading, setLoading] = useState(false);
 
+    const toastIdRef = useRef<Id>("");
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -47,7 +50,7 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
     // update done of checklist item
     const handleDoneChange = async (checkListId: string) => {
         // if loading return
-        if (loading) return console.log("updating task item please wait toast here")   // updating task item please wait toast here
+        if (loading) return toast("updating task item please wait", { type: "warning" }) // updating task item please wait toast here
 
 
         // make service call
@@ -56,9 +59,11 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
 
         try {
             setLoading(true)
+            toastIdRef.current = toast.loading("Updating Task...")
             const result = await updateDoneService({ taskId: task._id, checkListId, done: !item.done }, signalRef.current.signal)
 
             if (result) {
+                toast.update(toastIdRef.current, { type: "success", render: "Updated Task Item", isLoading: false, autoClose: 5000 })
                 setLoading(false)
                 // dispatch action to update checkList item
                 dispatch(updateDoneAction({ status: task.status, data: { taskId: task._id, checkListId, done: !item.done } }))
@@ -68,23 +73,28 @@ const Card: React.FC<Iprops> = ({ task, collapseAll }) => {
         catch (ex) {
             setLoading(false)
             switch (true) {
-                case (ex === false):
+                case (ex instanceof UnauthorizedError):
+                    errorToast(toastIdRef.current, "Please login again")
                     return navigate(routes.user.login)
 
                 case (ex instanceof InvalidTaskId):
+                    errorToast(toastIdRef.current, ex.message)
                     dispatch(removeTaskAction({ status: task.status, _id: task._id }))
                     return
 
                 case (ex instanceof InvalidCheckListItemId):
+                    errorToast(toastIdRef.current, ex.message)
                     // dispatch to remove item from checkList
                     dispatch(removeCheckListItemAction({ status: task.status, taskId: task._id, itemID: checkListId }))
                     return
 
                 case (ex instanceof NetworkError):
+                    errorToast(toastIdRef.current, ex.message)
                     // Check network and try again later, toast here
                     return
 
                 default:
+                    errorToast(toastIdRef.current, "Something went wrong try again later")
                     console.log(ex)
             }
         }

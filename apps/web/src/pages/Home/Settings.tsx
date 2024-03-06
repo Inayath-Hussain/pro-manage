@@ -1,6 +1,9 @@
-import { Fragment, useEffect } from "react";
+import { UserUpdateMiddlewareError } from "@pro-manage/common-interfaces";
+
+import { Fragment, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Id, toast } from "react-toastify";
 import z from "zod";
 import FormButton from "@web/components/UserPage/Button";
 import FormError from "@web/components/UserPage/ErrorMsg";
@@ -9,14 +12,14 @@ import { useOnline } from "@web/hooks/useOnline";
 import useForm from "@web/hooks/useForm";
 import { useAbortController } from "@web/hooks/useAbortContoller";
 import { routes } from "@web/routes";
+import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 import { userUpdateService } from "@web/services/api/user/userUpdateService";
 import { updateNameAction, userInfoSelector } from "@web/store/slices/userInfoSlice";
+import { errorToast } from "@web/utilities/toast/errorToast";
 
 import commonStyle from "./Index.module.css";
 import styles from "./Settings.module.css";
 
-import { UserUpdateMiddlewareError } from "@pro-manage/common-interfaces";
-import { UnauthorizedError } from "@web/services/api/errors";
 
 
 const SettingsPage = () => {
@@ -106,6 +109,8 @@ const SettingsPage = () => {
     } = useForm({ initialValues })
 
 
+    const toastIdRef = useRef<Id>("")
+
     useEffect(() => {
         switch (true) {
             case (!isOnline):
@@ -127,22 +132,28 @@ const SettingsPage = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
+        if (loading) return toast("Saving Data. Please wait", { type: "warning", autoClose: 5000 })
+
         try {
             // validate formValues
             await formSchmea.parse(formValues)
 
+            toastIdRef.current = toast.loading("Saving data")
             setLoading(true)
 
             // use update service
-            await userUpdateService(formValues, signalRef.current.signal)
+            const result = await userUpdateService(formValues, signalRef.current.signal)
 
-            setLoading(false)
-            setFormErrors(initialValues)
-            setSubmitionError("")
-            dispatch(updateNameAction({ name: formValues.name }))
+            if (result) {
+                setLoading(false)
+                setFormErrors(initialValues)
+                setSubmitionError("")
+                dispatch(updateNameAction({ name: formValues.name }))
+
+                toast.update("Saved Data", { type: "success", autoClose: 5000 })
+            }
 
 
-            // toast for successful user updation
         }
         catch (ex) {
             setLoading(false)
@@ -169,17 +180,25 @@ const SettingsPage = () => {
 
 
                 case (ex instanceof UserUpdateMiddlewareError):
+                    errorToast(toastIdRef.current, "Please make changes")
                     setFormErrors(ex.errors)
                     setSubmitionError("")
                     break;
 
 
                 case (ex instanceof UnauthorizedError):
+                    errorToast(toastIdRef.current, ex.message)
                     navigate(routes.user.login)
                     break;
 
 
+                case (ex instanceof NetworkError):
+                    errorToast(toastIdRef.current, ex.message)
+                    break;
+
+
                 default:
+                    errorToast(toastIdRef.current, "Something went wrong. Please try again later")
                     setFormErrors(initialValues)
                     setSubmitionError(ex as string)
             }

@@ -8,6 +8,7 @@ import { NetworkError } from "@web/services/api/errors";
 import { getTaskPublicService } from "@web/services/api/task/getTaskPublic";
 
 import styles from "./Index.module.css";
+import { toast } from "react-toastify";
 
 const PublicTaskPage = () => {
     const { id } = useParams();
@@ -36,13 +37,13 @@ const PublicTaskPage = () => {
 
 
                     case (ex instanceof NetworkError):
-                        // check your network and try again toast
+                        toast(ex.message, { type: "error", autoClose: 5000 })
                         setNetworkError("Check your network and try again");
                         break;
 
 
                     default:
-                        // Please try again later toast here
+                        toast("Something went wrong try again later", { type: "error", autoClose: 5000 })
                         setTryAgainLater("Something went wrong try again later")
                         break
                 }

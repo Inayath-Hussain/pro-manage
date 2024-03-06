@@ -2,7 +2,7 @@ import { IUpdateDoneBody, InvalidCheckListItemId, InvalidTaskId } from "@pro-man
 import { axiosInstance } from "../instance";
 import { AxiosError, GenericAbortSignal, HttpStatusCode } from "axios";
 import { apiUrls } from "../URLs";
-import { NetworkError } from "../errors";
+import { NetworkError, UnauthorizedError } from "../errors";
 
 export const updateDoneService = (payload: IUpdateDoneBody, signal: GenericAbortSignal) => {
     return new Promise(async (resolve, reject) => {
@@ -16,7 +16,8 @@ export const updateDoneService = (payload: IUpdateDoneBody, signal: GenericAbort
 
                     // if invalid auth tokens or auth tokens are missing
                     case (ex.response?.status === HttpStatusCode.Unauthorized):
-                        return reject(false)
+                        const unauthorizedErrorObj = new UnauthorizedError()
+                        return reject(unauthorizedErrorObj)
 
 
                     // if check list item doesn't exist

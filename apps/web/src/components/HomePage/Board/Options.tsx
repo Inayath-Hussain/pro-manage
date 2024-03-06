@@ -3,6 +3,7 @@ import { ITaskJSON, InvalidTaskId } from "@pro-manage/common-interfaces";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Id, toast } from "react-toastify";
 import DotsIcon from "@web/assets/icons/dots.svg"
 import ConfirmModalComponent from "@web/components/modal/contents/Confirm";
 import { useAbortController } from "@web/hooks/useAbortContoller";
@@ -15,6 +16,7 @@ import { removeTaskAction } from "@web/store/slices/taskSlice";
 import EditTask from "./EditTask";
 
 import styles from "./Options.module.css"
+import { errorToast } from "@web/utilities/toast/errorToast";
 
 
 interface Iprops {
@@ -28,6 +30,7 @@ const Options: React.FC<Iprops> = ({ task }) => {
     const [loading, setLoading] = useState(false);
 
     const containerRef = useRef<HTMLDivElement | null>(null);
+    const toastIdRef = useRef<Id>("");
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -67,35 +70,45 @@ const Options: React.FC<Iprops> = ({ task }) => {
 
     const handleDelete = async () => {
 
-        if (!isOnline) return // Connect to network and try again toast here
+        if (!isOnline) return toast("Connect to network and try again", { type: "error", autoClose: 5000 })
 
         // prevent from making request when a previous delete request is still pending
-        if (loading) return
+        if (loading) return toast("Deleting toast Please wait", { type: "warning", autoClose: 5000 })
 
         try {
-            await deleteTaskService(task._id, signalRef.current.signal)
+            toastIdRef.current = toast.loading("Deleting toast...")
+            const result = await deleteTaskService(task._id, signalRef.current.signal)
 
-            hideModal();
-            dispatch(removeTaskAction({ status: task.status, _id: task._id }))
+            if (result) {
+                toast.update(toastIdRef.current, { render: "Deleted Toast", autoClose: 5000, isLoading: false, type: "success" })
+                hideModal();
+                dispatch(removeTaskAction({ status: task.status, _id: task._id }))
+            }
         }
         catch (ex) {
             switch (true) {
                 case (ex instanceof UnauthorizedError):
+                    errorToast(toastIdRef.current, ex.message)
                     navigate(routes.user.login);
                     hideModal();
                     break;
 
 
                 case (ex instanceof InvalidTaskId):
+                    errorToast(toastIdRef.current, ex.message)
                     hideModal();
                     dispatch(removeTaskAction({ status: task.status, _id: task._id }))
                     break;
 
                 case (ex instanceof NetworkError):
-                    // Check network and try again toast here
+                    errorToast(toastIdRef.current, ex.message)
                     hideModal();
                     break;
+
+                default:
+                    errorToast(toastIdRef.current, "Something went wrong")
             }
+
         }
         setOpen(false)
     }
@@ -104,7 +117,7 @@ const Options: React.FC<Iprops> = ({ task }) => {
     const handleShare = async () => {
         await navigator.clipboard.writeText(window.location.origin + routes.public + task._id)
 
-        // copied to clipboard toast here
+        toast("Copied to clipboard", { type: 'success', autoClose: 5000 })
         setOpen(false)
 
     }

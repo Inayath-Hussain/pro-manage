@@ -1,18 +1,19 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import NavBar from "@web/components/HomePage/NavBar";
 import { useAbortController } from "@web/hooks/useAbortContoller";
+import { routes } from "@web/routes";
+import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
+import { getTaskService } from "@web/services/api/task/getTask";
 import { AppDispatch } from "@web/store";
 import { getUserInfo, userInfoSelector } from "@web/store/slices/userInfoSlice";
 import { renewTaskAction } from "@web/store/slices/taskSlice"
 
-import { routes } from "@web/routes";
-import { getTaskService } from "@web/services/api/task/getTask";
 
 import styles from "./Index.module.css";
-import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 
 
 const HomePage = () => {
@@ -32,10 +33,16 @@ const HomePage = () => {
                 dispatch(getUserInfo(signalRef.current.signal)).unwrap().catch((reason) => {
                     switch (true) {
                         case (reason instanceof UnauthorizedError):
+                            toast(reason.message, { type: "error", autoClose: 5000 })
                             return navigate(routes.user.login);
 
                         case (reason instanceof NetworkError):
-                            return console.log("Check your network and try again") // Check your network and try again toast here
+                            toast(reason.message, { type: "error", autoClose: 5000 })
+                            return
+
+                        default:
+                            toast("Something went wrong. Please try again later", { type: "error", autoClose: 5000 })
+
                     }
                 })
             }
@@ -56,7 +63,14 @@ const HomePage = () => {
             catch (ex) {
                 console.log(ex)
 
-                if (ex === false) navigate(routes.user.login)
+                switch (true) {
+                    case (ex instanceof UnauthorizedError):
+                        toast(ex.message, { type: "error", autoClose: 5000 })
+                        return navigate(routes.user.login);
+
+                    case (ex instanceof NetworkError):
+                        return toast(ex.message, { type: "error", autoClose: 5000 })
+                }
             }
 
 

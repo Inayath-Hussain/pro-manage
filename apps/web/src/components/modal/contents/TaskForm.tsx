@@ -3,6 +3,7 @@ import { AddTaskMiddlewareError, priorityEnum, ITaskJSON, IChecklist, UpdateTask
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Id, toast } from "react-toastify";
 import moment from "moment";
 import z from "zod";
 import PriorityInput from "@web/components/TaskForm/PriorityInput";
@@ -14,6 +15,7 @@ import { NetworkError, UnauthorizedError } from "@web/services/api/errors";
 import { addTaskService } from "@web/services/api/task/addTask";
 import { updateTaskService } from "@web/services/api/task/updateTask";
 import { addTaskAction, removeTaskAction, updateTaskAction } from "@web/store/slices/taskSlice";
+import { errorToast } from "@web/utilities/toast/errorToast";
 import { HandleChecklistItemChange } from "./TaskForm.interface";
 
 import styles from "./TaskForm.module.css"
@@ -68,6 +70,8 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
         dueDate: "",
         checkList: ""
     })
+
+    const toastIdRef = useRef<Id>("");
 
     // hooks
     const navigate = useNavigate();
@@ -132,7 +136,7 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
 
 
     const handleSubmit = async (e: React.FocusEvent<HTMLFormElement>) => {
-        if (loading) return // saving task please wait toast here
+        if (loading) return toast("Saving Task Please wait...", { type: "warning", autoClose: 5000 }) // saving task please wait toast here
 
         e.preventDefault();
 
@@ -151,19 +155,25 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
             // @ts-ignore
             checklistWithoutId.forEach(c => { delete c._id })
 
+            toastIdRef.current = toast.loading("Saving task")
             if (task === undefined) {
                 const taskDoc = await addTaskService({ title, priority, checkList: checklistWithoutId, dueDate: dueDate || undefined }, signalRef.current.signal)
-
-                // dispatch action to add task
-                dispatch(addTaskAction(taskDoc))
+                if (taskDoc) {
+                    toast.update(toastIdRef.current, { render: "Task saved", type: "success", autoClose: 5000 })
+                    // dispatch action to add task
+                    dispatch(addTaskAction(taskDoc))
+                }
             }
 
             else {
                 // updateTaskService
                 const taskDoc = await updateTaskService({ title, priority, checkList: checklistWithoutId, taskId: task._id, dueDate: dueDate || undefined }, signalRef.current.signal)
 
-                // dispatch action to update task
-                dispatch(updateTaskAction({ currentStatus: task.status, task: taskDoc }))
+                if (taskDoc) {
+                    toast.update(toastIdRef.current, { render: "Task saved", type: "success", autoClose: 5000 })
+                    // dispatch action to update task
+                    dispatch(updateTaskAction({ currentStatus: task.status, task: taskDoc }))
+                }
             }
 
             setFormErrors({ title: "", dueDate: "", checkList: "", priority: "" })
@@ -187,11 +197,12 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
                 case (ex instanceof UnauthorizedError):
                     navigate(routes.user.login)
                     closeModal();
-                    // Please login again toast here
+                    errorToast(toastIdRef.current, ex.message)
                     return
 
 
                 case (ex instanceof AddTaskMiddlewareError || ex instanceof UpdateTaskMiddlewareError):
+                    errorToast(toastIdRef.current, ex.message)
                     return setFormErrors({
                         title: ex.errors.title || "",
                         priority: ex.errors.priority || "",
@@ -204,17 +215,18 @@ const TaskFormModal: React.FC<Iprops> = ({ closeModal, task = undefined }) => {
                 case (ex instanceof InvalidTaskId):
                     dispatch(removeTaskAction({ status: task?.status as ITaskJSON["status"], _id: task?._id as string }))
                     closeModal()
-                    // task doesn't exist toast here
+                    errorToast(toastIdRef.current, ex.message)
+
                     return
 
 
                 case (ex instanceof NetworkError):
-                    // check network and try again toast here
+                    errorToast(toastIdRef.current, ex.message)
                     return
 
 
                 default:
-                    // Please try again later toast
+                    errorToast(toastIdRef.current, "Something went wrong try again later")
                     return
             }
 

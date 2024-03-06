@@ -1,7 +1,7 @@
-import { AxiosError, GenericAbortSignal } from "axios";
+import { AxiosError, GenericAbortSignal, HttpStatusCode } from "axios";
 import { apiUrls } from "../URLs";
 import { axiosInstance } from "../instance";
-import { NetworkError } from "../errors";
+import { NetworkError, UnauthorizedError } from "../errors";
 import { ITaskJSON } from "@pro-manage/common-interfaces";
 
 
@@ -18,8 +18,9 @@ export const getTaskService = async (filter: IFilter, signal: GenericAbortSignal
             if (ex instanceof AxiosError) {
                 switch (true) {
                     // if user is not authenticated then false value is returned( to navigate user to login page)
-                    case (ex.response?.status === 401):
-                        return reject(false);
+                    case (ex.response?.status === HttpStatusCode.Unauthorized):
+                        const unauthorizedErrorObj = new UnauthorizedError();
+                        return reject(unauthorizedErrorObj);
 
                     case (ex.code === AxiosError.ERR_NETWORK):
                         const networkErrorObj = new NetworkError();
@@ -28,7 +29,7 @@ export const getTaskService = async (filter: IFilter, signal: GenericAbortSignal
             }
 
             console.log(ex)
-            reject(ex)
+            reject("Please try again later")
         }
     })
 }
