@@ -12,5 +12,6 @@ export const apiUrls = {
     deleteTask: (id: string) => "/api/task/" + id,
     addTask: "/api/task",
     updateTask: "/api/task",
-    getPublicTask: (id: string) => "/api/task/public/" + id
+    getPublicTask: (id: string) => "/api/task/public/" + id,
+    analytics: "/api/task/analytics"
 }
