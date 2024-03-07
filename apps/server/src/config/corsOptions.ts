@@ -4,7 +4,7 @@ import { env } from "./env"
 export const corsOptions: CorsOptions = env.isProd ?
     {
         // add react deployed origin here.
-        origin: [],
+        origin: ["https://pro-manage-lime.vercel.app/"],
         credentials: true
     }
     :
