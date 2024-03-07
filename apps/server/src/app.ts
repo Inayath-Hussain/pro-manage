@@ -13,7 +13,6 @@ import { errorHandler } from "./utilities/requestHandlers/errorHandler";
 const app = express()
 
 
-console.log(corsOptions.origin)
 
 // MIDDLEWARES
 app.use(morgan("dev"));   // morgan

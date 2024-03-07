@@ -11,7 +11,7 @@ async function main() {
     connectToMongoDB().then(() => {
 
         app.listen(env.PORT, () => {
-            console.log("server listening on port", env.PORT, "in", process.env.NODE_ENV)
+            console.log("server listening on port", env.PORT, "in", process.env.NODE_ENV, "env")
         })
 
     })

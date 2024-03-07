@@ -8,7 +8,10 @@ const cookieName = "refreshToken"
  * @param token refresh token
  */
 export const signRefreshTokenCookie = (res: Response, token: string) => {
-    res.cookie(cookieName, token, { httpOnly: true, signed: true, expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 15) })
+    res.cookie(cookieName, token, {
+        httpOnly: true, signed: true, sameSite: "none", secure: true,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 15)
+    })
 }
 
 
