@@ -52,6 +52,7 @@ const NavBar = () => {
 
             // Something went wrong toast here
             toast("Something went wrong toast", { type: "error" })
+            console.log("logout")
         }
     }
 

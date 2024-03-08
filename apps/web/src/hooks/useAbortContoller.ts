@@ -15,6 +15,7 @@ export const useAbortController = () => {
             // when component re-renders due to strict mode, abort is triggered and aborted property is set to true which causes
             // all the ongoing and further requests to cancel. So a new abortControlled is created to use for future requests
             signalRef.current = new AbortController();
+            // renewController();
         }
     }, [])
 
