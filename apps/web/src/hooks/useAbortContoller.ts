@@ -9,6 +9,7 @@ export const useAbortController = () => {
 
     useEffect(() => {
         return () => {
+            console.log("abortController use effect")
             signalRef.current.abort("user switched page");
 
             // when component re-renders due to strict mode, abort is triggered and aborted property is set to true which causes
